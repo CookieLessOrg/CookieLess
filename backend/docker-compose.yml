@@ -17,7 +17,7 @@ services:
     ports: ["7880:80", "7881:443"]
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./etc/ssl/cert:/etc/ssl/certs
+      - ./etc/ssl/cert/:/etc/ssl/certs
     depends_on:
       - api
 
