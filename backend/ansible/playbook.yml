@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Copy backend code
+      copy:
+        src: ../backend
+        dest: /opt/cookieless
+
+    - name: Start containers
+      command: docker-compose -f /opt/cookieless/docker-compose.yml up -d

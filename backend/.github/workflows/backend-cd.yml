@@ -1,0 +1,17 @@
+name: Backend CD
+on:
+  push:
+    paths:
+      - 'backend/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy via Ansible
+        uses: ansible/ansible-action@master
+        with:
+          playbook: backend/ansible/playbook.yml
+          inventory: backend/ansible/inventory.ini
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: false
