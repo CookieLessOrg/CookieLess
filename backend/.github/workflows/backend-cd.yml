@@ -8,10 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy via Ansible
-        uses: ansible/ansible-action@master
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         with:
-          playbook: backend/ansible/playbook.yml
-          inventory: backend/ansible/inventory.ini
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: false
+          host: 147.45.139.11
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /opt/cookieless/backend
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
