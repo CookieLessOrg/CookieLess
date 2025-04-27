@@ -7,7 +7,7 @@ async function logData() {
     };
     
     // Send to backend API
-    fetch('https://api.cookieless.3192693-wd09907.twc1.net/log', {
+    fetch('https://147.45.139.11:7881/log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
