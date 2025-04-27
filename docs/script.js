@@ -6,7 +6,7 @@ async function logData() {
         userAgent: navigator.userAgent
     };
     
-    fetch('https://147.45.139.11:7881/log', {
+    fetch('https://147.45.139.11:7881/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -18,7 +18,7 @@ document.getElementById('showStats').addEventListener('click', fetchStats);
 
 async function fetchStats() {
     try {
-        const response = await fetch('https://147.45.139.11:7881/stats');
+        const response = await fetch('https://147.45.139.11:7881/get');
         const data = await response.json();
         displayStats(data);
     } catch (error) {

@@ -9,14 +9,14 @@ client = MongoClient("mongodb://mongodb:27017/")
 db = client["cookieless"]
 data_collection = db["visits"]
 
-@app.route('/log', methods=['POST'])
+@app.route('/post', methods=['POST'])
 def log_data():
     data = request.get_json()
     data["timestamp"] = datetime.now()
     data_collection.insert_one(data)
     return jsonify({"status": "success"}), 200
 
-@app.route('/stats', methods=['GET'])
+@app.route('/get', methods=['GET'])
 def get_stats():
     total_visitors = data_collection.count_documents({})
     return jsonify({"totalVisitors": total_visitors}), 200
