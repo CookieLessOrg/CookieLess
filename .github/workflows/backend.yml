@@ -1,21 +1,29 @@
-name: Backend CD
+name: Backend Deployment
 on:
   push:
     paths:
       - 'backend/**'
+      - '.github/workflows/backend.yml'
+    branches: [main]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: 147.45.139.11
-          username: root
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /opt/cookieless/backend
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             docker-compose down
             docker-compose up -d --build
