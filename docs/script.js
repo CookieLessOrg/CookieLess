@@ -30,10 +30,10 @@ async function fetchStats() {
 function displayStats(stats) {
     const container = document.getElementById('analytics-data');
     container.innerHTML = `
-        <h2>Aggregate Statistics</h2>
+        <h2>Some Statistics</h2>
         <div class="stat-item">
             <span class="stat-label">Total Visitors:</span>
-            <span class="stat-value">${stats.totalVisitors}</span>
+            <span class="stat-value">${stats}</span>
         </div>
         <!-- Add more stats as needed -->
     `;
