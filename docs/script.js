@@ -32,8 +32,7 @@ function displayStats(stats) {
     container.innerHTML = `
         <h2>Some Statistics</h2>
         <div class="stat-item">
-            <span class="stat-label">Total Visitors:</span>
-            <span class="stat-value">${stats}</span>
+            <span class="stat-value">${stats.stringify()}</span>
         </div>
         <!-- Add more stats as needed -->
     `;
