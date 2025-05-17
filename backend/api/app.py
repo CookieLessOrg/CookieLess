@@ -7,7 +7,21 @@ import os
 import json
 from statistics import generate_statistics_images  # New import
 
-app = Flask(__name__)
+
+def create_app():
+    app = Flask(__name__)
+    
+    # Create stats directory if not exists
+    os.makedirs(STATS_DIR, exist_ok=True)
+    
+    # Start update thread
+    thread = threading.Thread(target=update_stats_file)
+    thread.daemon = True
+    thread.start()
+    
+    return app
+
+app = create_app()
 
 # MongoDB setup
 client = MongoClient("mongodb://mongodb:27017/")
@@ -29,29 +43,30 @@ def get_time_periods():
 
 def update_stats_file():
     """Background task to update statistics JSON file"""
-    while True:
-        try:
-            periods = get_time_periods()
-            period_stats = {}
+    with app.app_context():
+        while True:
+            try:
+                periods = get_time_periods()
+                period_stats = {}
+                
+                for period, start_date in periods.items():
+                    period_stats[period] = {
+                        "total": data_collection.count_documents({"timestamp": {"$gte": start_date}}),
+                        "unique": len(data_collection.distinct("fingerprint", {"timestamp": {"$gte": start_date}}))
+                    }
+                
+                stats_data = {"periodStats": period_stats}
+                
+                with open(JSON_FILE, 'w') as f:
+                    json.dump(stats_data, f)
+                
+                # Generate new images
+                generate_statistics_images(stats_data, IMAGE_PATTERN)
+                
+            except Exception as e:
+                app.logger.error(f"Error updating stats: {str(e)}")
             
-            for period, start_date in periods.items():
-                period_stats[period] = {
-                    "total": data_collection.count_documents({"timestamp": {"$gte": start_date}}),
-                    "unique": len(data_collection.distinct("fingerprint", {"timestamp": {"$gte": start_date}}))
-                }
-            
-            stats_data = {"periodStats": period_stats}
-            
-            with open(JSON_FILE, 'w') as f:
-                json.dump(stats_data, f)
-            
-            # Generate new images
-            generate_statistics_images(stats_data, IMAGE_PATTERN)
-            
-        except Exception as e:
-            app.logger.error(f"Error updating stats: {str(e)}")
-        
-        time.sleep(30)
+            time.sleep(30)
 
 @app.route('/post', methods=['POST'])
 def log_data():
