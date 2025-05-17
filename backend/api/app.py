@@ -50,7 +50,8 @@ def create_app():
     app = Flask(__name__)
     
     # Initialize MongoDB connection
-    app.client = MongoClient("mongodb://mongodb:27017/")
+    mongo_uri = os.getenv("MONGO_URI", "mongodb://mongodb:27017/")
+    app.client = MongoClient(mongo_uri)
     app.db = app.client["cookieless"]
     app.data_collection = app.db["visits"]
 
