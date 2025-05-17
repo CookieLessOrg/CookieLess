@@ -758,7 +758,7 @@
         // fast statictics
         async function loadFastStats() {
             try {
-                const resp = await fetch('https://147.45.139.11:7881/fast_statistics.json');
+                const resp = await fetch('https://147.45.139.11:7881/fast_statistics');
                 const data = await resp.json();
                 if (data && data.periodStats) {
                     document.getElementById('fastDay').textContent = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
