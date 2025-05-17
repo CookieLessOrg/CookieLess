@@ -6,6 +6,8 @@ services:
       MONGODB_URI: "mongodb://mongodb:27017/cookieless"
     depends_on:
       - mongodb
+    volumes:
+      - stats_data:/var/www/stats
 
   mongodb:
     image: mongo:latest
@@ -18,8 +20,10 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./etc/ssl/:/etc/ssl/
+      - stats_data:/var/www/stats
     depends_on:
       - api
 
 volumes:
   mongodb_data:
+  stats_data: 
