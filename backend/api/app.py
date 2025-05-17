@@ -26,11 +26,6 @@ def log_data():
 
 @app.route('/get', methods=['GET'])
 def get_stats():
-    # Total visitors count
-    total_visitors = data_collection.count_documents({})
-    
-    # Unique visitors count
-    unique_visitors = len(data_collection.distinct("fingerprint"))
     
     # Daily statistics
     daily_stats = list(data_collection.aggregate([
@@ -93,8 +88,6 @@ def get_stats():
         }
     
     return jsonify({
-        "totalVisitors": total_visitors,
-        "uniqueVisitors": unique_visitors,
         "dailyStats": daily_stats,
         "monthlyStats": monthly_stats,
         "periodStats": period_stats
