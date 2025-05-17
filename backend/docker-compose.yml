@@ -13,6 +13,8 @@ services:
     image: mongo:latest
     volumes:
       - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
 
   nginx:
     image: nginx:latest
