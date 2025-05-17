@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import threading
@@ -85,6 +85,13 @@ def deprecated_get():
         "error": "Deprecated method",
         "message": "Please use /fast_statistics instead"
     }), 410
+
+@app.route('/fast_statistics', methods=['GET'])
+def fast_statistics():
+    try:
+        return send_file(JSON_FILE, mimetype='application/json')
+    except Exception as e:
+        return jsonify({"error": "Could not load statistics", "details": str(e)}), 500
 
 @app.route('/stats<int:num>.png')
 def get_stat_image(num):
