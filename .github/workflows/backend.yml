@@ -24,6 +24,5 @@ jobs:
           script: |
             cd /opt/CookieLess/backend
             git pull origin main
-            export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_INITDB_ROOT_USERNAME }}"
-            export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}"
-            ansible-playbook -i "localhost," -c local ansible/playbook.yml
+            sudo docker-compose down
+            sudo docker-compose up -d --build

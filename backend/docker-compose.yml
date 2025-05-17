@@ -3,7 +3,7 @@ services:
     build: ./api
     ports: ["3000:3000"]
     environment:
-      MONGODB_URI: "mongodb://MONGO_INITDB_ROOT_USERNAME:MONGO_INITDB_ROOT_PASSWORD@mongodb:27017/stats"
+      MONGODB_URI: "mongodb://mongodb:27017/stats"
     depends_on:
       - mongodb
     volumes:
@@ -15,9 +15,7 @@ services:
       - mongodb_data:/data/db
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    
 
   nginx:
     image: nginx:latest
