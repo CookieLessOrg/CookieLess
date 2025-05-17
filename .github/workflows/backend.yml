@@ -26,4 +26,4 @@ jobs:
             git pull origin main
             export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_INITDB_ROOT_USERNAME }}"
             export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}"
-            ansible-playbook ansible/playbook.yml
+            ansible-playbook -i "localhost," -c local ansible/playbook.yml
