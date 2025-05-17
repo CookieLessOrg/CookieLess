@@ -15,9 +15,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Ansible
-        run: sudo apt-get update && sudo apt-get install -y ansible
-
       - name: Deploy via SSH and Ansible
         uses: appleboy/ssh-action@v1
         with:
@@ -29,4 +26,6 @@ jobs:
             git pull origin main
             export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_INITDB_ROOT_USERNAME }}"
             export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}"
+            sudo apt-get update
+            sudo apt-get install -y ansible
             ansible-playbook ansible/playbook.yml
