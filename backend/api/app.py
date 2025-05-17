@@ -26,57 +26,6 @@ def log_data():
 
 @app.route('/get', methods=['GET'])
 def get_stats():
-    
-    # Daily statistics
-    daily_stats = list(data_collection.aggregate([
-        {
-            "$group": {
-                "_id": {
-                    "$dateToString": {
-                        "format": "%Y-%m-%d", 
-                        "date": "$timestamp"
-                    }
-                },
-                "total": {"$sum": 1},
-                "unique": {"$addToSet": "$fingerprint"}
-            }
-        },
-        {
-            "$project": {
-                "date": "$_id",
-                "total": 1,
-                "unique": {"$size": "$unique"},
-                "_id": 0
-            }
-        },
-        {"$sort": {"date": 1}}
-    ]))
-    
-    # Monthly statistics
-    monthly_stats = list(data_collection.aggregate([
-        {
-            "$group": {
-                "_id": {
-                    "$dateToString": {
-                        "format": "%Y-%m", 
-                        "date": "$timestamp"
-                    }
-                },
-                "total": {"$sum": 1},
-                "unique": {"$addToSet": "$fingerprint"}
-            }
-        },
-        {
-            "$project": {
-                "month": "$_id",
-                "total": 1,
-                "unique": {"$size": "$unique"},
-                "_id": 0
-            }
-        },
-        {"$sort": {"month": 1}}
-    ]))
-    
     # Time period statistics (last 24h, last 30d, all-time)
     periods = get_time_periods()
     period_stats = {}
@@ -88,8 +37,6 @@ def get_stats():
         }
     
     return jsonify({
-        "dailyStats": daily_stats,
-        "monthlyStats": monthly_stats,
         "periodStats": period_stats
     }), 200
 
