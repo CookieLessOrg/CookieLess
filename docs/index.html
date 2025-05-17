@@ -113,7 +113,7 @@
             display: flex;
             justify-content: center;
             gap: 18px;
-            margin: 28px 0 0 0;
+            margin: 28px 0 28px 0;
         }
 
         .btn {
@@ -177,6 +177,57 @@
             .info-list .label {
                 min-width: 90px;
             }
+        }
+
+
+
+
+
+        .stats-images {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .stats-thumb {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid #4f8cff22;
+            transition: box-shadow 0.2s, border 0.2s;
+        }
+
+        .stats-thumb:hover {
+            box-shadow: 0 0 8px #4f8cff88;
+            border: 2px solid #4f8cff;
+        }
+
+        .img-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(20, 30, 50, 0.92);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 0 24px #000a;
+            background: #fff;
+        }
+
+        .img-modal.active {
+            display: flex;
         }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -262,6 +313,33 @@
             <button class="btn" onclick="fetchDataFromServer()">Получить данные с сервера</button>
         </div>
         <div class="server-data" id="serverData" style="display:none"></div>
+
+
+
+
+        <div class="block" id="fast-stats-block">
+            <h2>Быстрая статистика</h2>
+            <ul class="info-list" id="fastStatsList">
+                <li><span class="label">За сутки</span><span class="value" id="fastDay"></span></li>
+                <li><span class="label">За месяц</span><span class="value" id="fastMonth"></span></li>
+                <li><span class="label">За всё время</span><span class="value" id="fastAll"></span></li>
+            </ul>
+        </div>
+        <div class="block" id="stats-images-block">
+            <h2>Графики всякие (изменить название)</h2>
+            
+                <div class="stats-images">
+                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats1.png" alt="Статистика 1" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats2.png" alt="Статистика 2" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats3.png" alt="Статистика 3" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats4.png" alt="Статистика 4" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats5.png" alt="Статистика 5" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                </div>
+            <div id="img-modal" class="img-modal" onclick="closeImgModal()">
+                <img id="img-modal-img" src="" alt="Увеличенное изображение">
+            </div>
+        </div>
+
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -295,7 +373,7 @@
                     collectedData.geoAccuracy = geoAccuracy;
                     collectedData.provider = provider;
                 }
-                catch (e) { 
+                catch (e) {
                     collectedData.ip = ip;
                     collectedData.geo = geo;
                     collectedData.geoAccuracy = geoAccuracy;
@@ -418,7 +496,7 @@
                 document.getElementById('webp').textContent = supported ? 'Да' : 'Нет';
                 collectedData.webp = supported ? 'Да' : 'Нет';
             });
-            // ... existing code ...
+
             // История
             let historySupport = !!window.history && typeof window.history.pushState === 'function' ? 'Да' : 'Нет';
             document.getElementById('history').textContent = historySupport;
@@ -667,7 +745,6 @@
                 });
         }
 
-        // Заглушка: получение данных с сервера
         function fetchDataFromServer() {
             let fakeServerData = {
                 message: "Сервер принял ваши данные и подсчитал:\n",
@@ -677,6 +754,40 @@
             serverDataDiv.style.display = 'block';
             serverDataDiv.textContent = fakeServerData.message + fakeServerData.summary;
         }
+
+        // fast statictics
+        async function loadFastStats() {
+            try {
+                const resp = await fetch('https://147.45.139.11:7881/fast_statistics.json');
+                const data = await resp.json();
+                if (data && data.periodStats) {
+                    document.getElementById('fastDay').textContent = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
+                    document.getElementById('fastMonth').textContent = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
+                    document.getElementById('fastAll').textContent = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
+                }
+            } catch (e) {
+                document.getElementById('fastDay').textContent = 'Ошибка';
+                document.getElementById('fastMonth').textContent = 'Ошибка';
+                document.getElementById('fastAll').textContent = 'Ошибка';
+            }
+        }
+        // for photos
+        document.querySelectorAll('.stats-thumb').forEach(img => {
+            img.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const modal = document.getElementById('img-modal');
+                const modalImg = document.getElementById('img-modal-img');
+                modalImg.src = this.src;
+                modal.classList.add('active');
+            });
+        });
+        function closeImgModal() {
+            document.getElementById('img-modal').classList.remove('active');
+            document.getElementById('img-modal-img').src = '';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadFastStats);
+
     </script>
 </body>
 
