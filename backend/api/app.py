@@ -49,9 +49,15 @@ def update_stats_file(app):
 def create_app():
     app = Flask(__name__)
     
-    # Initialize MongoDB connection
-    app.client = MongoClient("mongodb://mongodb:27017/")
-    app.db = app.client["cookieless"]
+    # Initialize MongoDB connection using credentials from environment
+    mongo_user = os.environ.get("MONGO_INITDB_ROOT_USERNAME")
+    mongo_pass = os.environ.get("MONGO_INITDB_ROOT_PASSWORD")
+    mongo_host = os.environ.get("MONGO_HOST")
+    mongo_port = os.environ.get("MONGO_PORT")
+    mongo_db = "cookieless"
+    mongo_uri = f"mongodb://{mongo_user}:{mongo_pass}@{mongo_host}:{mongo_port}/{mongo_db}?authSource=admin"
+    app.client = MongoClient(mongo_uri)
+    app.db = app.client[mongo_db]
     app.data_collection = app.db["visits"]
 
     # Create stats directory if not exists

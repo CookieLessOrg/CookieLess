@@ -3,19 +3,25 @@ services:
     build: ./api
     ports: ["3000:3000"]
     environment:
-      MONGODB_URI: "mongodb://mongodb:27017/stats"
+      MONGODB_URI: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/cookieless?authSource=admin"
     depends_on:
       - mongodb
     volumes:
       - stats_data:/var/www/stats
+    env_file:
+      - .env
 
   mongodb:
     image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodb_data:/data/db
     ports:
-      - "27017:27017"
-    
+      - "9333:27017" 
+    env_file:
+      - .env
 
   nginx:
     image: nginx:latest
