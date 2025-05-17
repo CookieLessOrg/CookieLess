@@ -16,14 +16,14 @@
     - name: Copy backend code
       copy:
         src: ../backend
-        dest: /opt/cookieless
+        dest: /opt/CookieLess
 
     - name: Create .env file for docker-compose
       copy:
-        dest: /opt/cookieless/backend/.env
+        dest: /opt/CookieLess/backend/.env
         content: |
           MONGO_INITDB_ROOT_USERNAME={{ lookup('env', 'MONGO_INITDB_ROOT_USERNAME') }}
           MONGO_INITDB_ROOT_PASSWORD={{ lookup('env', 'MONGO_INITDB_ROOT_PASSWORD') }}
 
     - name: Start containers
-      command: docker-compose -f /opt/cookieless/docker-compose.yml up -d
+      command: docker-compose -f /opt/CookieLess/docker-compose.yml up -d

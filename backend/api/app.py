@@ -9,7 +9,7 @@ from statistics import generate_statistics_images
 
 # Configuration
 STATS_DIR = "/var/www/stats"
-JSON_FILE = os.path.join(STATS_DIR, "fast_statistics.json")
+JSON_FILE = os.path.join(STATS_DIR, "fast_statistics")
 IMAGE_PATTERN = os.path.join(STATS_DIR, "stats{}.png")
 
 def get_time_periods():
@@ -78,7 +78,7 @@ def log_data():
 def deprecated_get():
     return jsonify({
         "error": "Deprecated method",
-        "message": "Please use /fast_statistics.json instead"
+        "message": "Please use /fast_statistics instead"
     }), 410
 
 @app.route('/stats<int:num>.png')
