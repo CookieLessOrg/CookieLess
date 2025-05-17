@@ -31,7 +31,7 @@ def update_stats_file(app):
                 for period, start_date in periods.items():
                     period_stats[period] = {
                         "total": app.data_collection.count_documents({"timestamp": {"$gte": start_date}}),
-                        "unique": len(app.data_collection.distinct("fingerprint", {"timestamp": {"$gte": start_date}}))
+                        "unique": len(app.data_collection.distinct("ip", {"timestamp": {"$gte": start_date}}))
                     }
                 
                 stats_data = {"periodStats": period_stats}
