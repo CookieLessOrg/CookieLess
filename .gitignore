@@ -1,1 +1,2 @@
 backend/etc/*
+backend/api/__pycache__

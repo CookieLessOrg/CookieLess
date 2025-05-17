@@ -7,6 +7,16 @@ import os
 import json
 from statistics import generate_statistics_images  # New import
 
+# MongoDB setup
+client = MongoClient("mongodb://mongodb:27017/")
+db = client["cookieless"]
+data_collection = db["visits"]
+
+# Configuration
+STATS_DIR = "/var/www/stats"
+JSON_FILE = f"{STATS_DIR}/fast_statistics.json"
+IMAGE_PATTERN = f"{STATS_DIR}/stats{{}}.png"
+
 
 def create_app():
     app = Flask(__name__)
@@ -23,15 +33,6 @@ def create_app():
 
 app = create_app()
 
-# MongoDB setup
-client = MongoClient("mongodb://mongodb:27017/")
-db = client["cookieless"]
-data_collection = db["visits"]
-
-# Configuration
-STATS_DIR = "/var/www/stats"
-JSON_FILE = f"{STATS_DIR}/fast_statistics.json"
-IMAGE_PATTERN = f"{STATS_DIR}/stats{{}}.png"
 
 def get_time_periods():
     now = datetime.now()
