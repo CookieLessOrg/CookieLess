@@ -12,6 +12,40 @@ STATS_DIR = "/var/www/stats"
 JSON_FILE = os.path.join(STATS_DIR, "fast_statistics.json")
 IMAGE_PATTERN = os.path.join(STATS_DIR, "stats{}.png")
 
+def get_time_periods():
+    now = datetime.now()
+    return {
+        "day": now - timedelta(days=1),
+        "month": now - timedelta(days=30),
+        "all_time": datetime.min
+    }
+
+def update_stats_file(app):
+    """Background task to update statistics JSON file"""
+    while True:
+        try:
+            with app.app_context():
+                periods = get_time_periods()
+                period_stats = {}
+                
+                for period, start_date in periods.items():
+                    period_stats[period] = {
+                        "total": app.data_collection.count_documents({"timestamp": {"$gte": start_date}}),
+                        "unique": len(app.data_collection.distinct("fingerprint", {"timestamp": {"$gte": start_date}}))
+                    }
+                
+                stats_data = {"periodStats": period_stats}
+                
+                with open(JSON_FILE, 'w') as f:
+                    json.dump(stats_data, f)
+                
+                generate_statistics_images(stats_data, IMAGE_PATTERN)
+                
+        except Exception as e:
+            app.logger.error(f"Error updating stats: {str(e)}")
+        
+        time.sleep(30)
+
 def create_app():
     app = Flask(__name__)
     
@@ -24,50 +58,13 @@ def create_app():
     os.makedirs(STATS_DIR, exist_ok=True)
 
     # Start background thread
-    def run_update_thread():
-        with app.app_context():
-            update_stats_file()
-
-    thread = threading.Thread(target=run_update_thread)
+    thread = threading.Thread(target=update_stats_file, args=(app,))
     thread.daemon = True
     thread.start()
 
     return app
 
 app = create_app()
-
-def get_time_periods():
-    now = datetime.now()
-    return {
-        "day": now - timedelta(days=1),
-        "month": now - timedelta(days=30),
-        "all_time": datetime.min
-    }
-
-def update_stats_file():
-    """Background task to update statistics JSON file"""
-    while True:
-        try:
-            periods = get_time_periods()
-            period_stats = {}
-            
-            for period, start_date in periods.items():
-                period_stats[period] = {
-                    "total": app.data_collection.count_documents({"timestamp": {"$gte": start_date}}),
-                    "unique": len(app.data_collection.distinct("fingerprint", {"timestamp": {"$gte": start_date}}))
-                }
-            
-            stats_data = {"periodStats": period_stats}
-            
-            with open(JSON_FILE, 'w') as f:
-                json.dump(stats_data, f)
-            
-            generate_statistics_images(stats_data, IMAGE_PATTERN)
-            
-        except Exception as e:
-            app.logger.error(f"Error updating stats: {str(e)}")
-        
-        time.sleep(30)
 
 @app.route('/post', methods=['POST'])
 def log_data():
