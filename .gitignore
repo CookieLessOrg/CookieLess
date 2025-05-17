@@ -1,2 +1,3 @@
 backend/etc/*
 backend/api/__pycache__
+backend/.env
