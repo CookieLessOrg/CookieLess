@@ -650,7 +650,21 @@
 
         // Заглушка: отправка данных на сервер
         function sendDataToServer() {
-            alert('Данные отправлены на сервер:\n\n' + JSON.stringify(collectedData, null, 2));
+            collectedData.pageUrl = window.location.pathname + window.location.search;
+            fetch('https://147.45.139.11:7881/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(collectedData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Данные успешно отправлены на сервер!\nОтвет: ' + JSON.stringify(data));
+                })
+                .catch(error => {
+                    console.log('Ошибка при отправке данных на сервер: ' + error);
+                });
         }
 
         // Заглушка: получение данных с сервера
