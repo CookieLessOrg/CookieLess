@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,4 +15,655 @@
     </div>
     <script src="script.js"></script>
 </body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о вашем браузере</title>
+    <style>
+        body {
+            background: #23272e;
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 36px auto;
+            background: #23272e;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px #0006;
+            padding: 28px 18px 18px 18px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #4f8cff;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .blocks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: space-between;
+        }
+
+        .block {
+            background: #2a2f3a;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px #0002;
+            padding: 18px 18px 12px 18px;
+            flex: 1 1 350px;
+            min-width: 320px;
+            margin-bottom: 0;
+        }
+
+        .block h2 {
+            font-size: 1.13em;
+            color: #7bb6ff;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.98em;
+            padding: 5px 0;
+            border-bottom: 1px solid #313543;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list .label {
+            color: #4f8cff;
+            font-weight: 500;
+            min-width: 160px;
+            margin-right: 10px;
+        }
+
+        .info-list .value {
+            text-align: right;
+            word-break: break-all;
+            color: #fff;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 28px 0 0 0;
+        }
+
+        .btn {
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1.08em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background: #3570d4;
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .server-data {
+            margin-top: 24px;
+            background: #23272e;
+            border-radius: 8px;
+            padding: 14px 16px;
+            color: #b3e5ff;
+            font-size: 1em;
+            word-break: break-all;
+            box-shadow: 0 2px 8px #0002;
+        }
+
+        #map {
+            width: 100%;
+            height: 320px;
+            border-radius: 10px;
+            margin-top: 18px;
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+            .blocks {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .block {
+                min-width: 0;
+                margin-bottom: 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 8px 2vw;
+            }
+
+            .block {
+                padding: 10px 6px 6px 6px;
+            }
+
+            .info-list .label {
+                min-width: 90px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Информация о вашем браузере</h1>
+        <div class="blocks">
+            <div class="block">
+                <h2>Браузер и система</h2>
+                <ul class="info-list">
+                    <li><span class="label">User Agent</span><span class="value" id="userAgent"></span></li>
+                    <li><span class="label">Название/версия браузера</span><span class="value" id="browserName"></span>
+                    </li>
+                    <li><span class="label">Движок/версия</span><span class="value" id="engine"></span></li>
+                    <li><span class="label">ОС/платформа</span><span class="value" id="platform"></span></li>
+                    <li><span class="label">Архитектура</span><span class="value" id="arch"></span></li>
+                    <li><span class="label">Язык</span><span class="value" id="language"></span></li>
+                    <li><span class="label">Мобильность</span><span class="value" id="isMobile"></span></li>
+                    <li><span class="label">Сенсорный экран</span><span class="value" id="isTouch"></span></li>
+                    <li><span class="label">JavaScript</span><span class="value" id="jsEnabled"></span></li>
+                    <li><span class="label">SVG</span><span class="value" id="svg"></span></li>
+                    <li><span class="label">WebP</span><span class="value" id="webp"></span></li>
+                    <li><span class="label">История</span><span class="value" id="history"></span></li>
+                    <li><span class="label">localStorage</span><span class="value" id="localStorage"></span></li>
+                    <li><span class="label">postMessage</span><span class="value" id="postMessage"></span></li>
+                    <li><span class="label">SameSite</span><span class="value" id="sameSite"></span></li>
+                    <li><span class="label">CSP1/CSP2</span><span class="value" id="csp"></span></li>
+                </ul>
+            </div>
+            <div class="block">
+                <h2>Экран и графика</h2>
+                <ul class="info-list">
+                    <li><span class="label">Размер экрана</span><span class="value" id="screen"></span></li>
+                    <li><span class="label">Доступная область</span><span class="value" id="availScreen"></span></li>
+                    <li><span class="label">Глубина цвета</span><span class="value" id="colorDepth"></span></li>
+                    <li><span class="label">Глубина пикселя</span><span class="value" id="pixelDepth"></span></li>
+                    <li><span class="label">GPU</span><span class="value" id="gpu"></span></li>
+                </ul>
+            </div>
+            <div class="block">
+                <h2>Сеть и местоположение</h2>
+                <ul class="info-list">
+                    <li><span class="label">IP-адрес</span><span class="value" id="ip"></span></li>
+                    <li><span class="label">Геолокация</span><span class="value" id="geo"></span></li>
+                    <li><span class="label">Точность (lat,lon)</span><span class="value" id="geoAccuracy"></span></li>
+                    <li><span class="label">Провайдер</span><span class="value" id="provider"></span></li>
+                    <li><span class="label">Время/часовой пояс</span><span class="value" id="timezone"></span></li>
+                    <li><span class="label">IPv6</span><span class="value" id="ipv6"></span></li>
+                </ul>
+                <button class="btn" id="showMapBtn" style="margin-top:10px;">Показать карту</button>
+                <div id="map"></div>
+            </div>
+            <div class="block">
+                <h2>Cookie, хранение и прочее</h2>
+                <ul class="info-list">
+                    <li><span class="label">Cookie</span><span class="value" id="cookie"></span></li>
+                    <li><span class="label">persistent-storage</span><span class="value" id="persistentStorage"></span>
+                    </li>
+                    <li><span class="label">Принимаемые типы</span><span class="value" id="accept"></span></li>
+                    <li><span class="label">Кодировки</span><span class="value" id="acceptEncoding"></span></li>
+                    <li><span class="label">Java</span><span class="value" id="javaEnabled"></span></li>
+                    <li><span class="label">Do Not Track</span><span class="value" id="dnt"></span></li>
+                    <li><span class="label">sendBeacon</span><span class="value" id="sendBeacon"></span></li>
+                    <li><span class="label">getUserMedia</span><span class="value" id="getUserMedia"></span></li>
+                    <li><span class="label">Заряд батареи</span><span class="value" id="battery"></span></li>
+                    <li><span class="label">Объём памяти</span><span class="value" id="deviceMemory"></span></li>
+                </ul>
+            </div>
+            <div class="block">
+                <h2>Плагины, медиа и разрешения</h2>
+                <ul class="info-list">
+                    <li><span class="label">Плагины</span><span class="value" id="plugins"></span></li>
+                    <li><span class="label">Медиаустройства</span><span class="value" id="mediaDevices"></span></li>
+                    <li><span class="label">Видео/аудио</span><span class="value" id="mediaSupport"></span></li>
+                    <li><span class="label">Разрешения</span><span class="value" id="permissions"></span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn" onclick="sendDataToServer()">Отправить данные на сервер</button>
+            <button class="btn" onclick="fetchDataFromServer()">Получить данные с сервера</button>
+        </div>
+        <div class="server-data" id="serverData" style="display:none"></div>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let collectedData = {};
+        let geoCoords = null;
+
+        async function updateInfo() {
+            // IP, геолокация, провайдер
+            let ip = 'Ошибка', geo = 'Ошибка', geoAccuracy = '—', provider = '—';
+            try {
+                let ipinfo = await fetch('https://ipapi.co/json/').then(r => r.json());
+                ip = ipinfo.ip || '—';
+                geo = (ipinfo.country_name || '') + (ipinfo.city ? ', ' + ipinfo.city : '');
+                geoAccuracy = ipinfo.latitude && ipinfo.longitude ? `${ipinfo.latitude}, ${ipinfo.longitude}` : '—';
+                provider = ipinfo.org || '—';
+                geoCoords = ipinfo.latitude && ipinfo.longitude ? [ipinfo.latitude, ipinfo.longitude] : null;
+                collectedData.ip = ip;
+                collectedData.geo = geo;
+                collectedData.geoAccuracy = geoAccuracy;
+                collectedData.provider = provider;
+            } catch (e) {
+                try {
+                    let ipinfo = await fetch('https://api.ipify.org?format=json').then(r => r.json());
+                    ip = ipinfo.ip || '—';
+                    geo = (ipinfo.country_name || '') + (ipinfo.city ? ', ' + ipinfo.city : '');
+                    geoAccuracy = ipinfo.latitude && ipinfo.longitude ? `${ipinfo.latitude}, ${ipinfo.longitude}` : '—';
+                    provider = ipinfo.org || '—';
+                    geoCoords = ipinfo.latitude && ipinfo.longitude ? [ipinfo.latitude, ipinfo.longitude] : null;
+                    collectedData.ip = ip;
+                    collectedData.geo = geo;
+                    collectedData.geoAccuracy = geoAccuracy;
+                    collectedData.provider = provider;
+                }
+                catch (e) { 
+                    collectedData.ip = ip;
+                    collectedData.geo = geo;
+                    collectedData.geoAccuracy = geoAccuracy;
+                    collectedData.provider = provider;
+                }
+            }
+            document.getElementById('ip').textContent = ip;
+            document.getElementById('geo').textContent = geo;
+            document.getElementById('geoAccuracy').textContent = geoAccuracy;
+            document.getElementById('provider').textContent = provider;
+
+            // Cookie
+            let cookie = navigator.cookieEnabled ? 'Да' : 'Нет';
+            document.getElementById('cookie').textContent = cookie;
+            collectedData.cookieEnabled = cookie;
+
+            // localStorage
+            let ls = 'Нет';
+            try {
+                localStorage.setItem('test', '1');
+                if (localStorage.getItem('test') === '1') {
+                    ls = 'Да';
+                    localStorage.removeItem('test');
+                }
+            } catch (e) { }
+            document.getElementById('localStorage').textContent = ls;
+            collectedData.localStorage = ls;
+
+            // persistent-storage
+            let persistent = 'Нет';
+            if (navigator.storage && navigator.storage.persisted) {
+                persistent = await navigator.storage.persisted().then(v => v ? 'Да' : 'Нет').catch(() => 'Нет');
+            }
+            document.getElementById('persistentStorage').textContent = persistent;
+            collectedData.persistentStorage = persistent;
+
+            // User Agent
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            collectedData.userAgent = navigator.userAgent;
+
+            // Язык браузера
+            let lang = navigator.language || (navigator.languages && navigator.languages[0]) || '—';
+            document.getElementById('language').textContent = lang;
+            collectedData.language = lang;
+
+            // Название и версия браузера (простая эвристика)
+            let browserName = 'Не определено', browserVersion = '';
+            let ua = navigator.userAgent;
+            if (/YaBrowser/.test(ua)) {
+                browserName = 'Yandex Browser';
+                browserVersion = ua.match(/YaBrowser\/([\d.]+)/)?.[1] || '';
+            } else if (/Chrome/.test(ua)) {
+                browserName = 'Chrome';
+                browserVersion = ua.match(/Chrome\/([\d.]+)/)?.[1] || '';
+            } else if (/Firefox/.test(ua)) {
+                browserName = 'Firefox';
+                browserVersion = ua.match(/Firefox\/([\d.]+)/)?.[1] || '';
+            } else if (/Safari/.test(ua)) {
+                browserName = 'Safari';
+                browserVersion = ua.match(/Version\/([\d.]+)/)?.[1] || '';
+            } else if (/Edge/.test(ua)) {
+                browserName = 'Edge';
+                browserVersion = ua.match(/Edge\/([\d.]+)/)?.[1] || '';
+            }
+            document.getElementById('browserName').textContent = browserName + (browserVersion ? ' ' + browserVersion : '');
+            collectedData.browserName = browserName;
+            collectedData.browserVersion = browserVersion;
+
+            // Движок браузера и версия
+            let engine = 'Не определено', engineVersion = '';
+            if (/AppleWebKit/.test(ua)) {
+                engine = 'WebKit';
+                engineVersion = ua.match(/AppleWebKit\/([\d.]+)/)?.[1] || '';
+            } else if (/Gecko/.test(ua)) {
+                engine = 'Gecko';
+                engineVersion = ua.match(/rv:([\d.]+)/)?.[1] || '';
+            }
+            document.getElementById('engine').textContent = engine + (engineVersion ? ' ' + engineVersion : '');
+            collectedData.engine = engine;
+            collectedData.engineVersion = engineVersion;
+
+            // ОС и платформа
+            document.getElementById('platform').textContent = navigator.platform;
+            collectedData.platform = navigator.platform;
+
+            // Архитектура
+            let arch = navigator.userAgent.includes('x64') || navigator.platform.includes('64') ? 'x64' : 'x86/ARM';
+            document.getElementById('arch').textContent = arch;
+            collectedData.arch = arch;
+
+            // Мобильное устройство
+            let isMobile = /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua) ? 'Да' : 'Нет';
+            document.getElementById('isMobile').textContent = isMobile;
+            collectedData.isMobile = isMobile;
+
+            // Сенсорный экран
+            let isTouch = 'Нет';
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) isTouch = 'Да';
+            document.getElementById('isTouch').textContent = isTouch;
+            collectedData.isTouch = isTouch;
+
+            // JavaScript
+            document.getElementById('jsEnabled').textContent = 'Да';
+            collectedData.jsEnabled = 'Да';
+
+            // SVG поддержка
+            let svgSupport = !!document.createElementNS &&
+                !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect ? 'Да' : 'Нет';
+            document.getElementById('svg').textContent = svgSupport;
+            collectedData.svg = svgSupport;
+
+            // WebP поддержка
+            function checkWebP(cb) {
+                let img = new Image();
+                img.onload = () => cb(img.width === 1);
+                img.onerror = () => cb(false);
+                img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4TAYAAAAvAAAAAAfQ//73v/+BiOh/AAA=";
+            }
+            checkWebP(supported => {
+                document.getElementById('webp').textContent = supported ? 'Да' : 'Нет';
+                collectedData.webp = supported ? 'Да' : 'Нет';
+            });
+            // ... existing code ...
+            // История
+            let historySupport = !!window.history && typeof window.history.pushState === 'function' ? 'Да' : 'Нет';
+            document.getElementById('history').textContent = historySupport;
+            collectedData.history = historySupport;
+
+            // postMessage
+            let postMessageSupport = !!window.postMessage ? 'Да' : 'Нет';
+            document.getElementById('postMessage').textContent = postMessageSupport;
+            collectedData.postMessage = postMessageSupport;
+
+            // SameSite
+            let sameSiteSupport = (function () {
+                try {
+                    document.cookie = "samesite_test=1; SameSite=Strict";
+                    return document.cookie.indexOf("samesite_test") !== -1 ? 'Да' : 'Нет';
+                } catch (e) { return 'Нет'; }
+            })();
+            document.getElementById('sameSite').textContent = sameSiteSupport;
+            collectedData.sameSite = sameSiteSupport;
+
+            // CSP1/CSP2
+            let csp1 = typeof window.SecurityPolicyViolationEvent !== "undefined" ? 'Да' : 'Нет';
+            let csp2 = typeof window.ReportingObserver !== "undefined" ? 'Да' : 'Нет';
+            document.getElementById('csp').textContent = csp1 + '/' + csp2;
+            collectedData.csp = csp1 + '/' + csp2;
+
+            // Размер экрана
+            let screenSize = `${screen.width} x ${screen.height}`;
+            document.getElementById('screen').textContent = screenSize;
+            collectedData.screen = screenSize;
+
+            // Доступная область экрана
+            let availScreen = `${screen.availWidth} x ${screen.availHeight}`;
+            document.getElementById('availScreen').textContent = availScreen;
+            collectedData.availScreen = availScreen;
+
+            // Глубина цвета
+            let colorDepth = `${screen.colorDepth} бит`;
+            document.getElementById('colorDepth').textContent = colorDepth;
+            collectedData.colorDepth = colorDepth;
+
+            // Глубина пикселя
+            let pixelDepth = `${screen.pixelDepth} бит`;
+            document.getElementById('pixelDepth').textContent = pixelDepth;
+            collectedData.pixelDepth = pixelDepth;
+
+            // GPU-информация
+            let canvas = document.createElement('canvas');
+            let gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            let gpu = '—';
+            if (gl) {
+                let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    gpu = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) + ' / ' +
+                        gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                } else {
+                    gpu = gl.getParameter(gl.RENDERER);
+                }
+            }
+            document.getElementById('gpu').textContent = gpu;
+            collectedData.gpu = gpu;
+
+            // IPv6 поддержка
+            let ipv6 = '—';
+            try {
+                fetch('https://ipv6.icanhazip.com/', { method: 'GET', mode: 'cors' })
+                    .then(r => r.text())
+                    .then(ipv6addr => {
+                        ipv6 = ipv6addr.trim() ? 'Да' : 'Нет';
+                        document.getElementById('ipv6').textContent = ipv6;
+                        collectedData.ipv6 = ipv6;
+                    }).catch(() => { document.getElementById('ipv6').textContent = 'Нет'; collectedData.ipv6 = 'Нет'; });
+            } catch (e) {
+                document.getElementById('ipv6').textContent = 'Нет';
+                collectedData.ipv6 = 'Нет';
+            }
+
+            // Заряд батареи
+            let batteryStr = '—';
+            if (navigator.getBattery) {
+                navigator.getBattery().then(bat => {
+                    batteryStr = `Заряд: ${Math.round(bat.level * 100)}%${bat.charging ? ', Заряжается' : ''}`;
+                    document.getElementById('battery').textContent = batteryStr;
+                    collectedData.battery = batteryStr;
+                });
+            } else {
+                document.getElementById('battery').textContent = 'Нет данных';
+                collectedData.battery = 'Нет данных';
+            }
+
+            // Объем памяти устройства
+            let deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + ' ГБ' : '—';
+            document.getElementById('deviceMemory').textContent = deviceMemory;
+            collectedData.deviceMemory = deviceMemory;
+
+            // Принимаемые типы документов
+            let accept = navigator.userAgent.includes('Chrome') ? 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' : '—';
+            document.getElementById('accept').textContent = accept;
+            collectedData.accept = accept;
+
+            // Принимаемые кодировки
+            let acceptEncoding = 'gzip, deflate, br, zstd';
+            document.getElementById('acceptEncoding').textContent = acceptEncoding;
+            collectedData.acceptEncoding = acceptEncoding;
+
+            // Java включён/выключен
+            let javaEnabled = navigator.javaEnabled ? (navigator.javaEnabled() ? 'Да' : 'Нет') : 'Нет';
+            document.getElementById('javaEnabled').textContent = javaEnabled;
+            collectedData.javaEnabled = javaEnabled;
+
+            // Do Not Track
+            let dnt = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+            let dntVal = (dnt === "1" || dnt === "yes") ? 'Включено' : 'Отключено';
+            document.getElementById('dnt').textContent = dntVal;
+            collectedData.dnt = dntVal;
+
+            // sendBeacon
+            let sendBeacon = typeof navigator.sendBeacon === 'function' ? 'Да' : 'Нет';
+            document.getElementById('sendBeacon').textContent = sendBeacon;
+            collectedData.sendBeacon = sendBeacon;
+
+            // getUserMedia
+            let getUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? 'Да' : 'Нет';
+            document.getElementById('getUserMedia').textContent = getUserMedia;
+            collectedData.getUserMedia = getUserMedia;
+
+            // Поддержка видео/аудио
+            let mediaSupport = [];
+            let v = document.createElement('video');
+            let a = document.createElement('audio');
+            if (v.canPlayType) {
+                if (v.canPlayType('video/mp4')) mediaSupport.push('MP4');
+                if (v.canPlayType('video/webm')) mediaSupport.push('WebM');
+                if (v.canPlayType('video/ogg')) mediaSupport.push('Ogg');
+            }
+            if (a.canPlayType) {
+                if (a.canPlayType('audio/aac')) mediaSupport.push('AAC');
+                if (a.canPlayType('audio/ogg')) mediaSupport.push('OGG');
+                if (a.canPlayType('audio/flac')) mediaSupport.push('FLAC');
+                if (a.canPlayType('audio/mp3')) mediaSupport.push('MP3');
+            }
+            document.getElementById('mediaSupport').textContent = mediaSupport.join(', ') || '—';
+            collectedData.mediaSupport = mediaSupport;
+
+            // Плагины
+            let plugins = [];
+            if (navigator.plugins && navigator.plugins.length) {
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    let p = navigator.plugins[i];
+                    plugins.push(`${p.name}::${p.description}::${p.filename}`);
+                }
+            } else {
+                plugins = ['Нет данных или не поддерживается'];
+            }
+            document.getElementById('plugins').textContent = plugins.join('; ');
+            collectedData.plugins = plugins;
+
+            // Медиаустройства
+            let mediaDevicesStr = '—';
+            let multimediaDevices = {};
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                try {
+                    let devices = await navigator.mediaDevices.enumerateDevices();
+                    let speakers = devices.filter(d => d.kind === 'audiooutput').length;
+                    let micros = devices.filter(d => d.kind === 'audioinput').length;
+                    let webcams = devices.filter(d => d.kind === 'videoinput').length;
+                    mediaDevicesStr = `Динамики: ${speakers}, Микрофоны: ${micros}, Камеры: ${webcams}`;
+                    multimediaDevices = { speakers, micros, webcams };
+                } catch (e) {
+                    mediaDevicesStr = 'Ошибка';
+                }
+            }
+            document.getElementById('mediaDevices').textContent = mediaDevicesStr;
+            collectedData.multimediaDevices = multimediaDevices;
+
+            // Разрешения браузера
+            let permissionsStr = [];
+            if (navigator.permissions && navigator.permissions.query) {
+                let perms = [
+                    'geolocation', 'notifications', 'midi', 'camera', 'microphone',
+                    'background-sync', 'persistent-storage', 'accelerometer', 'gyroscope',
+                    'magnetometer', 'clipboard-read', 'clipboard-write', 'payment-handler'
+                ];
+                for (let perm of perms) {
+                    try {
+                        let res = await navigator.permissions.query({ name: perm });
+                        permissionsStr.push(`${perm}: ${res.state}`);
+                    } catch (e) {
+                        // не поддерживается
+                    }
+                }
+            } else {
+                permissionsStr = ['Не поддерживается'];
+            }
+            document.getElementById('permissions').textContent = permissionsStr.join('; ');
+            collectedData.permissions = permissionsStr;
+
+            // Время и часовой пояс
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const offset = -new Date().getTimezoneOffset() / 60;
+            let tzStr = `${tz} (UTC${offset >= 0 ? '+' : ''}${offset})`;
+            document.getElementById('timezone').textContent = tzStr;
+            collectedData.timezone = tzStr;
+        }
+
+        // Кнопка показать карту
+        document.getElementById('showMapBtn').onclick = function () {
+            if (!geoCoords) {
+                alert('Геолокация недоступна');
+                return;
+            }
+            let mapDiv = document.getElementById('map');
+            mapDiv.style.display = 'block';
+            if (!window._leafletMap) {
+                window._leafletMap = L.map('map').setView(geoCoords, 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(window._leafletMap);
+                L.marker(geoCoords).addTo(window._leafletMap);
+            } else {
+                window._leafletMap.setView(geoCoords, 12);
+            }
+        };
+
+        // Автообновление (раз в 15 секунд)
+        updateInfo();
+        setInterval(updateInfo, 15000);
+
+        // Заглушка: отправка данных на сервер
+        function sendDataToServer() {
+            alert('Данные отправлены на сервер:\n\n' + JSON.stringify(collectedData, null, 2));
+        }
+
+        // Заглушка: получение данных с сервера
+        function fetchDataFromServer() {
+            let fakeServerData = {
+                message: "Сервер принял ваши данные и подсчитал:\n",
+                summary: "Ваш браузер современный, поддержка большинства технологий присутствует."
+            };
+            let serverDataDiv = document.getElementById('serverData');
+            serverDataDiv.style.display = 'block';
+            serverDataDiv.textContent = fakeServerData.message + fakeServerData.summary;
+        }
+    </script>
+</body>
+
 </html>
