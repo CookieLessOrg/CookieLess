@@ -83,13 +83,13 @@
         mode: '0755'
 
     - name: Create .env file for docker-compose
-      copy:
+      template:
+        src: ../templates/env.j2
         dest: /opt/CookieLess/backend/.env
-        content: |
-          MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME }
-          MONGO_INITDB_ROOT_PASSWORD=${ MONGO_INITDB_ROOT_PASSWORD }
-          MONGO_HOST=${ MONGO_HOST }
-          MONGO_PORT=${ MONGO_PORT }
+        owner: root
+        group: root
+        mode: '0600'
+
 
     - name: Start containers
       command: docker-compose up -d
