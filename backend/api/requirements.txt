@@ -2,3 +2,8 @@ Flask==3.0.0
 pymongo==4.5.0
 gunicorn==21.2.0
 matplotlib==3.10.1
+pandas==2.2.2
+numpy==1.26.4
+requests==2.31.0
+folium==0.15.1
+datetime==5.4
