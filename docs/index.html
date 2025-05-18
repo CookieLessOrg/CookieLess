@@ -36,6 +36,7 @@
         }
 
         .container {
+            position: relative;
             max-width: 900px;
             margin: 36px auto;
             background: #23272e;
@@ -229,12 +230,37 @@
         .img-modal.active {
             display: flex;
         }
+
+
+        .lang-switch {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            margin-left: 0;
+            display: block;
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .lang-switch:hover {
+            background: #3570d4;
+            transform: translateY(-2px) scale(1.03);
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 
 <body>
     <div class="container">
+        <button id="lang-switch" class="lang-switch">English</button>
         <h1>Информация о вашем браузере</h1>
         <div class="blocks">
             <div class="block">
@@ -308,10 +334,10 @@
                 </ul>
             </div>
         </div>
-        <div class="btn-group">
+        <!-- <div class="btn-group">
             <button class="btn" onclick="sendDataToServer()">Отправить данные на сервер</button>
             <button class="btn" onclick="fetchDataFromServer()">Получить данные с сервера</button>
-        </div>
+        </div> -->
         <div class="server-data" id="serverData" style="display:none"></div>
 
 
@@ -325,16 +351,21 @@
                 <li><span class="label">За всё время</span><span class="value" id="fastAll"></span></li>
             </ul>
         </div>
-        <div class="block" id="stats-images-block">
+        <div class="block" id="stats-images-block" style="margin-top: 18px;">
             <h2>Графики всякие (изменить название)</h2>
-            
-                <div class="stats-images">
-                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats1.png" alt="Статистика 1" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats2.png" alt="Статистика 2" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats3.png" alt="Статистика 3" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats4.png" alt="Статистика 4" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                    <img class="stats-thumb" src="https://147.45.139.11:7881/stats5.png" alt="Статистика 5" onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                </div>
+
+            <div class="stats-images">
+                <img class="stats-thumb" src="https://147.45.139.11:7881/stats1.png" alt="Статистика 1"
+                    onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                <img class="stats-thumb" src="https://147.45.139.11:7881/stats2.png" alt="Статистика 2"
+                    onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                <img class="stats-thumb" src="https://147.45.139.11:7881/stats3.png" alt="Статистика 3"
+                    onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                <img class="stats-thumb" src="https://147.45.139.11:7881/stats4.png" alt="Статистика 4"
+                    onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+                <img class="stats-thumb" src="https://147.45.139.11:7881/stats5.png" alt="Статистика 5"
+                    onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
+            </div>
             <div id="img-modal" class="img-modal" onclick="closeImgModal()">
                 <img id="img-modal-img" src="" alt="Увеличенное изображение">
             </div>
@@ -349,6 +380,10 @@
         async function updateInfo() {
             // IP, геолокация, провайдер
             let ip = 'Ошибка', geo = 'Ошибка', geoAccuracy = '—', provider = '—';
+            collectedData.ip = ip;
+            collectedData.geo = geo;
+            collectedData.geoAccuracy = geoAccuracy;
+            collectedData.provider = provider;
             try {
                 let ipinfo = await fetch('https://ipapi.co/json/').then(r => r.json());
                 ip = ipinfo.ip || '—';
@@ -723,7 +758,10 @@
         };
 
         // Автообновление (раз в 15 секунд)
-        updateInfo();
+        updateInfo().then(() => {
+            sendDataToServer();
+        });
+        ;
         // setInterval(updateInfo, 15000);
 
         // Заглушка: отправка данных на сервер
@@ -745,15 +783,15 @@
                 });
         }
 
-        function fetchDataFromServer() {
-            let fakeServerData = {
-                message: "Сервер принял ваши данные и подсчитал:\n",
-                summary: "Ваш браузер современный, поддержка большинства технологий присутствует."
-            };
-            let serverDataDiv = document.getElementById('serverData');
-            serverDataDiv.style.display = 'block';
-            serverDataDiv.textContent = fakeServerData.message + fakeServerData.summary;
-        }
+        // function fetchDataFromServer() {
+        //     let fakeServerData = {
+        //         message: "Сервер принял ваши данные и подсчитал:\n",
+        //         summary: "Ваш браузер современный, поддержка большинства технологий присутствует."
+        //     };
+        //     let serverDataDiv = document.getElementById('serverData');
+        //     serverDataDiv.style.display = 'block';
+        //     serverDataDiv.textContent = fakeServerData.message + fakeServerData.summary;
+        // }
 
         // fast statictics
         async function loadFastStats() {
@@ -788,6 +826,162 @@
 
         window.addEventListener('DOMContentLoaded', loadFastStats);
 
+    </script>
+    <script>
+        const translations = {
+            ru: {
+                "Информация о вашем браузере": "Информация о вашем браузере",
+                "Браузер и система": "Браузер и система",
+                "User Agent": "User Agent",
+                "Название/версия браузера": "Название/версия браузера",
+                "Движок/версия": "Движок/версия",
+                "ОС/платформа": "ОС/платформа",
+                "Архитектура": "Архитектура",
+                "Язык": "Язык",
+                "Мобильность": "Мобильность",
+                "Сенсорный экран": "Сенсорный экран",
+                "JavaScript": "JavaScript",
+                "SVG": "SVG",
+                "WebP": "WebP",
+                "История": "История",
+                "localStorage": "localStorage",
+                "postMessage": "postMessage",
+                "SameSite": "SameSite",
+                "CSP1/CSP2": "CSP1/CSP2",
+                "Экран и графика": "Экран и графика",
+                "Размер экрана": "Размер экрана",
+                "Доступная область": "Доступная область",
+                "Глубина цвета": "Глубина цвета",
+                "Глубина пикселя": "Глубина пикселя",
+                "GPU": "GPU",
+                "Сеть и местоположение": "Сеть и местоположение",
+                "IP-адрес": "IP-адрес",
+                "Геолокация": "Геолокация",
+                "Точность (lat,lon)": "Точность (lat,lon)",
+                "Провайдер": "Провайдер",
+                "Время/часовой пояс": "Время/часовой пояс",
+                "IPv6": "IPv6",
+                "Показать карту": "Показать карту",
+                "Cookie, хранение и прочее": "Cookie, хранение и прочее",
+                "Cookie": "Cookie",
+                "persistent-storage": "persistent-storage",
+                "Принимаемые типы": "Принимаемые типы",
+                "Кодировки": "Кодировки",
+                "Java": "Java",
+                "Do Not Track": "Do Not Track",
+                "sendBeacon": "sendBeacon",
+                "getUserMedia": "getUserMedia",
+                "Заряд батареи": "Заряд батареи",
+                "Объём памяти": "Объём памяти",
+                "Плагины, медиа и разрешения": "Плагины, медиа и разрешения",
+                "Плагины": "Плагины",
+                "Медиаустройства": "Медиаустройства",
+                "Видео/аудио": "Видео/аудио",
+                "Разрешения": "Разрешения",
+                "Быстрая статистика": "Быстрая статистика",
+                "За сутки": "За сутки",
+                "За месяц": "За месяц",
+                "За всё время": "За всё время",
+                "Графики всякие (изменить название)": "Графики всякие (изменить название)",
+                "Статистика 1": "Статистика 1",
+                "Статистика 2": "Статистика 2",
+                "Статистика 3": "Статистика 3",
+                "Статистика 4": "Статистика 4",
+                "Статистика 5": "Статистика 5",
+                "Ошибка": "Ошибка"
+            },
+            en: {
+                "Информация о вашем браузере": "Your browser information",
+                "Браузер и система": "Browser and system",
+                "User Agent": "User Agent",
+                "Название/версия браузера": "Browser/version",
+                "Движок/версия": "Engine/version",
+                "ОС/платформа": "OS/platform",
+                "Архитектура": "Architecture",
+                "Язык": "Language",
+                "Мобильность": "Mobile",
+                "Сенсорный экран": "Touch screen",
+                "JavaScript": "JavaScript",
+                "SVG": "SVG",
+                "WebP": "WebP",
+                "История": "History",
+                "localStorage": "localStorage",
+                "postMessage": "postMessage",
+                "SameSite": "SameSite",
+                "CSP1/CSP2": "CSP1/CSP2",
+                "Экран и графика": "Screen and graphics",
+                "Размер экрана": "Screen size",
+                "Доступная область": "Available area",
+                "Глубина цвета": "Color depth",
+                "Глубина пикселя": "Pixel depth",
+                "GPU": "GPU",
+                "Сеть и местоположение": "Network and location",
+                "IP-адрес": "IP address",
+                "Геолокация": "Geolocation",
+                "Точность (lat,lon)": "Accuracy (lat,lon)",
+                "Провайдер": "Provider",
+                "Время/часовой пояс": "Time/Timezone",
+                "IPv6": "IPv6",
+                "Показать карту": "Show map",
+                "Cookie, хранение и прочее": "Cookie, storage & other",
+                "Cookie": "Cookie",
+                "persistent-storage": "persistent-storage",
+                "Принимаемые типы": "Accepted types",
+                "Кодировки": "Encodings",
+                "Java": "Java",
+                "Do Not Track": "Do Not Track",
+                "sendBeacon": "sendBeacon",
+                "getUserMedia": "getUserMedia",
+                "Заряд батареи": "Battery",
+                "Объём памяти": "Device memory",
+                "Плагины, медиа и разрешения": "Plugins, media & permissions",
+                "Плагины": "Plugins",
+                "Медиаустройства": "Media devices",
+                "Видео/аудио": "Video/audio",
+                "Разрешения": "Permissions",
+                "Быстрая статистика": "Quick statistics",
+                "За сутки": "Day",
+                "За месяц": "Month",
+                "За всё время": "All time",
+                "Графики всякие (изменить название)": "Various charts",
+                "Статистика 1": "Statistics 1",
+                "Статистика 2": "Statistics 2",
+                "Статистика 3": "Statistics 3",
+                "Статистика 4": "Statistics 4",
+                "Статистика 5": "Statistics 5",
+                "Ошибка": "Error"
+            }
+        };
+
+        let currentLang = "ru";
+
+        function translatePage(lang) {
+            currentLang = lang;
+            // Переводим все элементы с текстом
+            document.querySelectorAll("h1, h2, .label, .btn, #showMapBtn, .block h2").forEach(el => {
+                let orig = el.getAttribute("data-orig") || el.textContent.trim();
+                if (!el.getAttribute("data-orig")) el.setAttribute("data-orig", orig);
+                if (translations[lang][orig]) el.textContent = translations[lang][orig];
+            });
+            // Переводим кнопку
+            const btn = document.getElementById("lang-switch");
+            btn.textContent = lang === "ru" ? "English" : "Russian";
+            // Переводим alt у картинок
+            document.querySelectorAll(".stats-thumb").forEach((img, i) => {
+                let orig = img.getAttribute("data-orig-alt") || img.alt;
+                if (!img.getAttribute("data-orig-alt")) img.setAttribute("data-orig-alt", orig);
+                if (translations[lang][orig]) img.alt = translations[lang][orig];
+            });
+        }
+
+        document.getElementById("lang-switch").addEventListener("click", function () {
+            translatePage(currentLang === "ru" ? "en" : "ru");
+        });
+
+        // Перевести страницу при загрузке
+        window.addEventListener("DOMContentLoaded", function () {
+            translatePage(currentLang);
+        });
     </script>
 </body>
 
