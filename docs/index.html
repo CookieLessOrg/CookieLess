@@ -1144,7 +1144,7 @@
                 window._leafletMap.setView(geoCoords, 12);
             }
         };
-
+        loadFastStats();
         // Автообновление (раз в 15 секунд)
         updateInfo().then(() => {
             sendDataToServer();
@@ -1232,7 +1232,6 @@
             document.getElementById('fastAll').setAttribute('data-orig-value', all);
         }
         // ... existing code ...
-        window.addEventListener('DOMContentLoaded', loadFastStats);
         // for photos
         document.querySelectorAll('.stats-thumb').forEach(img => {
             img.addEventListener('click', function (e) {
@@ -1248,6 +1247,7 @@
             document.getElementById('img-modal-img').src = '';
         }
 
+        window.addEventListener('DOMContentLoaded', loadFastStats);
 
     </script>
     <script>
