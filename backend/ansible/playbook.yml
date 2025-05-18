@@ -87,7 +87,7 @@
         dest: /opt/CookieLess/backend/.env
         owner: root
         group: root
-        mode: '0755'
+        mode: '0777'
 
 
     - name: Start containers
