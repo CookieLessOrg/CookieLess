@@ -24,4 +24,5 @@ jobs:
           script: |
             cd /opt/CookieLess/backend
             git pull origin main
-            ansible-playbook ansible/playbook.yml
+            ansible-playbook ansible/playbook.yml   --ask-become-pass   -e MONGO_INITDB_ROOT_USERNAME=${{secrets.MONGO_INITDB_ROOT_USERNAME}}   -e MONGO_INITDB_ROOT_PASSWORD=${{secrets.MONGO_INITDB_ROOT_PASSWORD}}  -e MONGO_HOST=mongodb   -e MONGO_PORT=27017
+
