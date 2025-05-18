@@ -1091,20 +1091,12 @@
             document.getElementById('permissions').setAttribute('data-orig-value', permissions);
             collectedData.permissions = permissions;
 
-            // Быстрая статистика (пример, можно заменить на реальные данные)
-            document.getElementById('fastDay').textContent = '—';
-            document.getElementById('fastDay').setAttribute('data-orig-value', '—');
-            document.getElementById('fastMonth').textContent = '—';
-            document.getElementById('fastMonth').setAttribute('data-orig-value', '—');
-            document.getElementById('fastAll').textContent = '—';
-            document.getElementById('fastAll').setAttribute('data-orig-value', '—');
-
+          
             // После обновления данных — автоперевод значений
             if (typeof translatePage === 'function') {
                 translatePage(currentLang);
             }
         }
-        // ... existing code ...
 
 
 
