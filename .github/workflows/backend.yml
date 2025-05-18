@@ -25,7 +25,7 @@ jobs:
             cd /opt/CookieLess/backend
             git pull origin main
             ansible-playbook ansible/playbook.yml \
-              --extra-vars "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
-                            MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
-                            MONGO_HOST=${{secrets.MONGO_HOST}} \
-                            MONGO_PORT=${{secrets.MONGO_PORT}} \"
+              --extra-vars '{"MONGO_INITDB_ROOT_USERNAME": "${{ secrets.MONGO_INITDB_ROOT_USERNAME }}", \
+                             "MONGO_INITDB_ROOT_PASSWORD": "${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}", \
+                             "MONGO_HOST": "${{secrets.MONGO_HOST}}", \
+                             "MONGO_PORT": "${{secrets.MONGO_PORT}}"}'
