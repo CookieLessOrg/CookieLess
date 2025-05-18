@@ -233,6 +233,7 @@
             background: #3570d4;
             transform: translateY(-2px) scale(1.03);
         }
+
         #fast-stats-block {
             margin-top: 18px;
         }
@@ -715,6 +716,410 @@
             collectedData.timezone = tzStr;
         }
 
+
+
+
+        async function updateInfo() {
+            // IP, геолокация, провайдер
+            let ip = 'Ошибка', geo = 'Ошибка', geoAccuracy = '—', provider = '—';
+            collectedData.ip = ip;
+            collectedData.geo = geo;
+            collectedData.geoAccuracy = geoAccuracy;
+            collectedData.provider = provider;
+            try {
+                let ipinfo = await fetch('https://ipapi.co/json/').then(r => r.json());
+                ip = ipinfo.ip || '—';
+                geo = (ipinfo.country_name || '') + (ipinfo.city ? ', ' + ipinfo.city : '');
+                geoAccuracy = ipinfo.latitude && ipinfo.longitude ? `${ipinfo.latitude}, ${ipinfo.longitude}` : '—';
+                provider = ipinfo.org || '—';
+                geoCoords = ipinfo.latitude && ipinfo.longitude ? [ipinfo.latitude, ipinfo.longitude] : null;
+                collectedData.ip = ip;
+                collectedData.geo = geo;
+                collectedData.geoAccuracy = geoAccuracy;
+                collectedData.provider = provider;
+            } catch (e) {
+                try {
+                    let ipinfo = await fetch('https://api.ipify.org?format=json').then(r => r.json());
+                    ip = ipinfo.ip || '—';
+                    geo = (ipinfo.country_name || '') + (ipinfo.city ? ', ' + ipinfo.city : '');
+                    geoAccuracy = ipinfo.latitude && ipinfo.longitude ? `${ipinfo.latitude}, ${ipinfo.longitude}` : '—';
+                    provider = ipinfo.org || '—';
+                    geoCoords = ipinfo.latitude && ipinfo.longitude ? [ipinfo.latitude, ipinfo.longitude] : null;
+                    collectedData.ip = ip;
+                    collectedData.geo = geo;
+                    collectedData.geoAccuracy = geoAccuracy;
+                    collectedData.provider = provider;
+                }
+                catch (e) {
+                    collectedData.ip = ip;
+                    collectedData.geo = geo;
+                    collectedData.geoAccuracy = geoAccuracy;
+                    collectedData.provider = provider;
+                }
+            }
+            document.getElementById('ip').textContent = ip;
+            document.getElementById('ip').setAttribute('data-orig-value', ip);
+            document.getElementById('geo').textContent = geo;
+            document.getElementById('geo').setAttribute('data-orig-value', geo);
+            document.getElementById('geoAccuracy').textContent = geoAccuracy;
+            document.getElementById('geoAccuracy').setAttribute('data-orig-value', geoAccuracy);
+            document.getElementById('provider').textContent = provider;
+            document.getElementById('provider').setAttribute('data-orig-value', provider);
+
+            // Cookie
+            let cookie = navigator.cookieEnabled ? 'Да' : 'Нет';
+            document.getElementById('cookie').textContent = cookie;
+            document.getElementById('cookie').setAttribute('data-orig-value', cookie);
+            collectedData.cookieEnabled = cookie;
+
+            // localStorage
+            let ls = 'Нет';
+            try {
+                localStorage.setItem('test', '1');
+                if (localStorage.getItem('test') === '1') {
+                    ls = 'Да';
+                    localStorage.removeItem('test');
+                }
+            } catch (e) { }
+            document.getElementById('localStorage').textContent = ls;
+            document.getElementById('localStorage').setAttribute('data-orig-value', ls);
+            collectedData.localStorage = ls;
+
+            // persistent-storage
+            let persistent = 'Нет';
+            if (navigator.storage && navigator.storage.persisted) {
+                persistent = await navigator.storage.persisted().then(v => v ? 'Да' : 'Нет').catch(() => 'Нет');
+            }
+            document.getElementById('persistentStorage').textContent = persistent;
+            document.getElementById('persistentStorage').setAttribute('data-orig-value', persistent);
+            collectedData.persistentStorage = persistent;
+
+            // User Agent
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            document.getElementById('userAgent').setAttribute('data-orig-value', navigator.userAgent);
+            collectedData.userAgent = navigator.userAgent;
+
+            // Язык браузера
+            let lang = navigator.language || (navigator.languages && navigator.languages[0]) || '—';
+            document.getElementById('language').textContent = lang;
+            document.getElementById('language').setAttribute('data-orig-value', lang);
+            collectedData.language = lang;
+
+            // Название и версия браузера (простая эвристика)
+            let browserName = 'Не определено', browserVersion = '';
+            let ua = navigator.userAgent;
+            if (/YaBrowser/.test(ua)) {
+                browserName = 'Yandex Browser';
+                browserVersion = ua.match(/YaBrowser\/([\d.]+)/)?.[1] || '';
+            } else if (/Chrome/.test(ua)) {
+                browserName = 'Chrome';
+                browserVersion = ua.match(/Chrome\/([\d.]+)/)?.[1] || '';
+            } else if (/Firefox/.test(ua)) {
+                browserName = 'Firefox';
+                browserVersion = ua.match(/Firefox\/([\d.]+)/)?.[1] || '';
+            } else if (/Safari/.test(ua)) {
+                browserName = 'Safari';
+                browserVersion = ua.match(/Version\/([\d.]+)/)?.[1] || '';
+            } else if (/Edge/.test(ua)) {
+                browserName = 'Edge';
+                browserVersion = ua.match(/Edge\/([\d.]+)/)?.[1] || '';
+            }
+            let browserNameFull = browserName + (browserVersion ? ' ' + browserVersion : '');
+            document.getElementById('browserName').textContent = browserNameFull;
+            document.getElementById('browserName').setAttribute('data-orig-value', browserNameFull);
+            collectedData.browserName = browserName;
+            collectedData.browserVersion = browserVersion;
+
+            // Движок браузера и версия
+            let engine = 'Не определено', engineVersion = '';
+            if (/AppleWebKit/.test(ua)) {
+                engine = 'WebKit';
+                engineVersion = ua.match(/AppleWebKit\/([\d.]+)/)?.[1] || '';
+            } else if (/Gecko/.test(ua)) {
+                engine = 'Gecko';
+                engineVersion = ua.match(/rv:([\d.]+)/)?.[1] || '';
+            }
+            let engineFull = engine + (engineVersion ? ' ' + engineVersion : '');
+            document.getElementById('engine').textContent = engineFull;
+            document.getElementById('engine').setAttribute('data-orig-value', engineFull);
+            collectedData.engine = engine;
+            collectedData.engineVersion = engineVersion;
+
+            // ОС и платформа
+            document.getElementById('platform').textContent = navigator.platform;
+            document.getElementById('platform').setAttribute('data-orig-value', navigator.platform);
+            collectedData.platform = navigator.platform;
+
+            // Архитектура
+            let arch = navigator.userAgent.includes('x64') || navigator.platform.includes('64') ? 'x64' : 'x86/ARM';
+            document.getElementById('arch').textContent = arch;
+            document.getElementById('arch').setAttribute('data-orig-value', arch);
+            collectedData.arch = arch;
+
+            // Мобильное устройство
+            let isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop|Mobile/i.test(ua) ? 'Да' : 'Нет';
+            document.getElementById('isMobile').textContent = isMobile;
+            document.getElementById('isMobile').setAttribute('data-orig-value', isMobile);
+            collectedData.isMobile = isMobile;
+
+            // Сенсорный экран
+            let isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ? 'Да' : 'Нет';
+            document.getElementById('isTouch').textContent = isTouch;
+            document.getElementById('isTouch').setAttribute('data-orig-value', isTouch);
+            collectedData.isTouch = isTouch;
+
+            // JavaScript
+            let jsEnabled = 'Да';
+            document.getElementById('jsEnabled').textContent = jsEnabled;
+            document.getElementById('jsEnabled').setAttribute('data-orig-value', jsEnabled);
+            collectedData.jsEnabled = jsEnabled;
+
+            // SVG
+            let svg = !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect ? 'Да' : 'Нет';
+            document.getElementById('svg').textContent = svg;
+            document.getElementById('svg').setAttribute('data-orig-value', svg);
+            collectedData.svg = svg;
+
+            // WebP
+            let webp = 'Нет';
+            try {
+                let img = new Image();
+                img.onload = img.onerror = function () {
+                    webp = (img.height === 2) ? 'Да' : 'Нет';
+                    document.getElementById('webp').textContent = webp;
+                    document.getElementById('webp').setAttribute('data-orig-value', webp);
+                    collectedData.webp = webp;
+                };
+                img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=";
+            } catch (e) {
+                document.getElementById('webp').textContent = webp;
+                document.getElementById('webp').setAttribute('data-orig-value', webp);
+                collectedData.webp = webp;
+            }
+
+            // История
+            let historySupport = !!window.history ? 'Да' : 'Нет';
+            document.getElementById('history').textContent = historySupport;
+            document.getElementById('history').setAttribute('data-orig-value', historySupport);
+            collectedData.history = historySupport;
+
+            // postMessage
+            let postMessage = !!window.postMessage ? 'Да' : 'Нет';
+            document.getElementById('postMessage').textContent = postMessage;
+            document.getElementById('postMessage').setAttribute('data-orig-value', postMessage);
+            collectedData.postMessage = postMessage;
+
+            // SameSite
+            let sameSite = 'Нет';
+            try {
+                document.cookie = "samesite_test=1; SameSite=Strict";
+                sameSite = document.cookie.indexOf("samesite_test") !== -1 ? 'Да' : 'Нет';
+            } catch (e) { }
+            document.getElementById('sameSite').textContent = sameSite;
+            document.getElementById('sameSite').setAttribute('data-orig-value', sameSite);
+            collectedData.sameSite = sameSite;
+
+            // CSP
+            let csp = 'Нет';
+            if ('securitypolicy' in document) csp = 'Да';
+            document.getElementById('csp').textContent = csp;
+            document.getElementById('csp').setAttribute('data-orig-value', csp);
+            collectedData.csp = csp;
+
+            // Экран и графика
+            let screenSize = `${window.screen.width} x ${window.screen.height}`;
+            document.getElementById('screen').textContent = screenSize;
+            document.getElementById('screen').setAttribute('data-orig-value', screenSize);
+            collectedData.screen = screenSize;
+
+            let availScreen = `${window.screen.availWidth} x ${window.screen.availHeight}`;
+            document.getElementById('availScreen').textContent = availScreen;
+            document.getElementById('availScreen').setAttribute('data-orig-value', availScreen);
+            collectedData.availScreen = availScreen;
+
+            let colorDepth = window.screen.colorDepth || '—';
+            document.getElementById('colorDepth').textContent = colorDepth;
+            document.getElementById('colorDepth').setAttribute('data-orig-value', colorDepth);
+            collectedData.colorDepth = colorDepth;
+
+            let pixelDepth = window.screen.pixelDepth || '—';
+            document.getElementById('pixelDepth').textContent = pixelDepth;
+            document.getElementById('pixelDepth').setAttribute('data-orig-value', pixelDepth);
+            collectedData.pixelDepth = pixelDepth;
+
+            // GPU (WebGL)
+            let gpu = '—';
+            try {
+                let canvas = document.createElement('canvas');
+                let gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    } else {
+                        gpu = gl.getParameter(gl.RENDERER);
+                    }
+                }
+            } catch (e) { }
+            document.getElementById('gpu').textContent = gpu;
+            document.getElementById('gpu').setAttribute('data-orig-value', gpu);
+            collectedData.gpu = gpu;
+
+            // Время/часовой пояс
+            let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '—';
+            document.getElementById('timezone').textContent = timezone;
+            document.getElementById('timezone').setAttribute('data-orig-value', timezone);
+            collectedData.timezone = timezone;
+
+            // IPv6
+            let ipv6 = '—';
+            // Для простоты не реализуем отдельный запрос, можно добавить через внешний сервис
+            document.getElementById('ipv6').textContent = ipv6;
+            document.getElementById('ipv6').setAttribute('data-orig-value', ipv6);
+            collectedData.ipv6 = ipv6;
+
+            // Принимаемые типы
+            let accept = navigator.acceptLanguages ? navigator.acceptLanguages.join(', ') : (navigator.language || '—');
+            document.getElementById('accept').textContent = accept;
+            document.getElementById('accept').setAttribute('data-orig-value', accept);
+            collectedData.accept = accept;
+
+            // Кодировки
+            let acceptEncoding = '—';
+            document.getElementById('acceptEncoding').textContent = acceptEncoding;
+            document.getElementById('acceptEncoding').setAttribute('data-orig-value', acceptEncoding);
+            collectedData.acceptEncoding = acceptEncoding;
+
+            // Java
+            let javaEnabled = navigator.javaEnabled && navigator.javaEnabled() ? 'Да' : 'Нет';
+            document.getElementById('javaEnabled').textContent = javaEnabled;
+            document.getElementById('javaEnabled').setAttribute('data-orig-value', javaEnabled);
+            collectedData.javaEnabled = javaEnabled;
+
+            // Do Not Track
+            let dnt = (navigator.doNotTrack == "1" || window.doNotTrack == "1" || navigator.msDoNotTrack == "1") ? 'Да' : 'Нет';
+            document.getElementById('dnt').textContent = dnt;
+            document.getElementById('dnt').setAttribute('data-orig-value', dnt);
+            collectedData.dnt = dnt;
+
+            // sendBeacon
+            let sendBeacon = !!navigator.sendBeacon ? 'Да' : 'Нет';
+            document.getElementById('sendBeacon').textContent = sendBeacon;
+            document.getElementById('sendBeacon').setAttribute('data-orig-value', sendBeacon);
+            collectedData.sendBeacon = sendBeacon;
+
+            // getUserMedia
+            let getUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? 'Да' : 'Нет';
+            document.getElementById('getUserMedia').textContent = getUserMedia;
+            document.getElementById('getUserMedia').setAttribute('data-orig-value', getUserMedia);
+            collectedData.getUserMedia = getUserMedia;
+
+            // Заряд батареи
+            let battery = '—';
+            if (navigator.getBattery) {
+                try {
+                    let bat = await navigator.getBattery();
+                    battery = Math.round(bat.level * 100) + '%';
+                } catch (e) { }
+            }
+            document.getElementById('battery').textContent = battery;
+            document.getElementById('battery').setAttribute('data-orig-value', battery);
+            collectedData.battery = battery;
+
+            // Объём памяти
+            let deviceMemory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : '—';
+            document.getElementById('deviceMemory').textContent = deviceMemory;
+            document.getElementById('deviceMemory').setAttribute('data-orig-value', deviceMemory);
+            collectedData.deviceMemory = deviceMemory;
+
+            // Плагины
+            let plugins = [];
+            if (navigator.plugins && navigator.plugins.length) {
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    plugins.push(navigator.plugins[i].name);
+                }
+            }
+            let pluginsStr = plugins.length ? plugins.join(', ') : '—';
+            document.getElementById('plugins').textContent = pluginsStr;
+            document.getElementById('plugins').setAttribute('data-orig-value', pluginsStr);
+            collectedData.plugins = pluginsStr;
+
+            // Медиаустройства
+            let mediaDevices = '—';
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                try {
+                    let devices = await navigator.mediaDevices.enumerateDevices();
+                    mediaDevices = devices.map(d => d.kind + (d.label ? ` (${d.label})` : '')).join(', ');
+                } catch (e) { }
+            }
+            document.getElementById('mediaDevices').textContent = mediaDevices;
+            document.getElementById('mediaDevices').setAttribute('data-orig-value', mediaDevices);
+            collectedData.mediaDevices = mediaDevices;
+
+            // Видео/аудио поддержка
+            let mediaSupport = [];
+            let video = document.createElement('video');
+            let audio = document.createElement('audio');
+            if (video.canPlayType) {
+                if (video.canPlayType('video/webm; codecs="vp8, vorbis"')) mediaSupport.push('WebM Video');
+                if (video.canPlayType('video/mp4; codecs="avc1.42E01E"')) mediaSupport.push('MP4 Video');
+            }
+            if (audio.canPlayType) {
+                if (audio.canPlayType('audio/ogg; codecs="vorbis"')) mediaSupport.push('Ogg Audio');
+                if (audio.canPlayType('audio/mpeg;')) mediaSupport.push('MP3 Audio');
+            }
+            let mediaSupportStr = mediaSupport.length ? mediaSupport.join(', ') : '—';
+            document.getElementById('mediaSupport').textContent = mediaSupportStr;
+            document.getElementById('mediaSupport').setAttribute('data-orig-value', mediaSupportStr);
+            collectedData.mediaSupport = mediaSupportStr;
+
+            // Разрешения
+            let permissions = '—';
+            if (navigator.permissions && navigator.permissions.query) {
+                try {
+                    let permList = ['geolocation', 'notifications', 'camera', 'microphone'];
+                    let results = await Promise.all(permList.map(p => navigator.permissions.query({ name: p }).then(r => `${p}: ${r.state}`).catch(() => null)));
+                    permissions = results.filter(Boolean).join(', ');
+                } catch (e) { }
+            }
+            document.getElementById('permissions').textContent = permissions;
+            document.getElementById('permissions').setAttribute('data-orig-value', permissions);
+            collectedData.permissions = permissions;
+
+            // Быстрая статистика (пример, можно заменить на реальные данные)
+            document.getElementById('fastDay').textContent = '—';
+            document.getElementById('fastDay').setAttribute('data-orig-value', '—');
+            document.getElementById('fastMonth').textContent = '—';
+            document.getElementById('fastMonth').setAttribute('data-orig-value', '—');
+            document.getElementById('fastAll').textContent = '—';
+            document.getElementById('fastAll').setAttribute('data-orig-value', '—');
+
+            // После обновления данных — автоперевод значений
+            if (typeof translatePage === 'function') {
+                translatePage(currentLang);
+            }
+        }
+        // ... existing code ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // Кнопка показать карту
         document.getElementById('showMapBtn').onclick = function () {
             if (!geoCoords) {
@@ -866,7 +1271,12 @@
                 "Статистика 3": "Статистика 3",
                 "Статистика 4": "Статистика 4",
                 "Статистика 5": "Статистика 5",
-                "Ошибка": "Ошибка"
+
+                "Ошибка": "Ошибка",
+                "Да": "Да",
+                "Нет": "Нет",
+                "Ошибка": "Ошибка",
+                "Не определено": "Не определено",
             },
             en: {
                 "Информация о вашем браузере": "Your browser information",
@@ -927,7 +1337,12 @@
                 "Статистика 3": "Statistics 3",
                 "Статистика 4": "Statistics 4",
                 "Статистика 5": "Statistics 5",
-                "Ошибка": "Error"
+                
+                "Ошибка": "Error",
+                "Да": "Yes",
+                "Нет": "No",
+                "Ошибка": "Error",
+                "Не определено": "Undefined",
             }
         };
 
@@ -946,6 +1361,12 @@
                 if (!el.getAttribute("data-orig")) el.setAttribute("data-orig", orig);
                 if (translations[lang][orig]) el.textContent = translations[lang][orig];
             });
+            // Переводим значения данных
+            document.querySelectorAll(".value").forEach(el => {
+                let orig = el.getAttribute("data-orig-value") || el.textContent.trim();
+                if (!el.getAttribute("data-orig-value")) el.setAttribute("data-orig-value", orig);
+                el.textContent = translateValue(orig, lang);
+            });
             // Переводим кнопку
             const btn = document.getElementById("lang-switch");
             btn.textContent = lang === "ru" ? "English" : "Russian";
@@ -956,6 +1377,13 @@
                 if (translations[lang][orig]) img.alt = translations[lang][orig];
             });
         }
+        function translateValue(val, lang) {
+            // Если значение есть в переводах — переводим, иначе возвращаем как есть
+            if (typeof val === "string" && translations[lang][val] !== undefined) {
+                return translations[lang][val];
+            }
+            return val;
+        }
 
         document.getElementById("lang-switch").addEventListener("click", function () {
             translatePage(currentLang === "ru" ? "en" : "ru");
@@ -964,6 +1392,7 @@
         // Перевести страницу при загрузке
         window.addEventListener("DOMContentLoaded", function () {
             translatePage(currentLang);
+            updateInfo();
         });
     </script>
 </body>
