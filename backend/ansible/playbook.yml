@@ -13,7 +13,6 @@
       command: git pull origin main
       args:
         chdir: /opt/CookieLess
-      become: yes  
 
     # Check existing installations
     - name: Check Docker installation
@@ -85,7 +84,6 @@
       file:
         path: /opt/CookieLess/backend/.env
         state: absent
-        become: true
 
     - name: Set backend directory permissions
       file:
@@ -94,7 +92,6 @@
         group: root
         mode: '0755'
         recurse: yes
-        become: true
 
     - name: Create .env file for docker-compose
       template:
@@ -104,7 +101,6 @@
         group: root
         mode: '0600'
         force: yes
-      become: true
 
 
     - name: Start containers
