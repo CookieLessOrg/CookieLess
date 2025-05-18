@@ -5,7 +5,14 @@ import threading
 import time
 import os
 import json
-from statistics import generate_statistics_images
+from statistics import (
+    load_data_from_mongodb,
+    create_language_chart,
+    create_screen_resolution_chart,
+    create_os_visualization,
+    create_browser_visualization,
+    create_media_devices_table
+)
 
 # Configuration
 STATS_DIR = "/var/www/stats"
@@ -21,7 +28,7 @@ def get_time_periods():
     }
 
 def update_stats_file(app):
-    """Background task to update statistics JSON file"""
+    """Background task to update statistics JSON file and images"""
     while True:
         try:
             with app.app_context():
@@ -39,7 +46,16 @@ def update_stats_file(app):
                 with open(JSON_FILE, 'w') as f:
                     json.dump(stats_data, f)
                 
-                generate_statistics_images(stats_data, IMAGE_PATTERN)
+                # Load data from MongoDB
+                df = load_data_from_mongodb(app)
+                
+                if not df.empty:
+                    # Generate five visualization images
+                    create_language_chart(df, IMAGE_PATTERN, num=1)
+                    create_screen_resolution_chart(df, IMAGE_PATTERN, num=2)
+                    create_os_visualization(df, IMAGE_PATTERN, num=3)
+                    create_browser_visualization(df, IMAGE_PATTERN, num=4)
+                    create_media_devices_table(df, IMAGE_PATTERN, num=5)
                 
         except Exception as e:
             app.logger.error(f"Error updating stats: {str(e)}")
