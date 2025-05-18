@@ -24,4 +24,4 @@ jobs:
           script: |
             cd /opt/CookieLess/backend
             git pull origin main
-            ansible-playbook playbook.yml
+            ansible-playbook ansible/playbook.yml
