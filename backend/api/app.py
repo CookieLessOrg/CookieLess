@@ -11,7 +11,8 @@ from statistics import (
     create_screen_resolution_chart,
     create_os_visualization,
     create_browser_visualization,
-    create_media_devices_table
+    create_media_devices_table,
+    create_map_visualization
 )
 
 # Configuration
@@ -56,6 +57,7 @@ def update_stats_file(app):
                     create_os_visualization(df, IMAGE_PATTERN, num=3)
                     create_browser_visualization(df, IMAGE_PATTERN, num=4)
                     create_media_devices_table(df, IMAGE_PATTERN, num=5)
+                    create_map_visualization(df, IMAGE_PATTERN, num=6)
                 
         except Exception as e:
             app.logger.error(f"Error updating stats: {str(e)}")
