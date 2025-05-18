@@ -1224,12 +1224,18 @@
             } catch (e) {
                 // Можно добавить логирование ошибки, если нужно
             }
-            document.getElementById('fastDay').textContent = day;
-            document.getElementById('fastDay').setAttribute('data-orig-value', day);
-            document.getElementById('fastMonth').textContent = month;
-            document.getElementById('fastMonth').setAttribute('data-orig-value', month);
-            document.getElementById('fastAll').textContent = all;
-            document.getElementById('fastAll').setAttribute('data-orig-value', all);
+            
+                const dayText = `All: ${data.periodStats.day.total}, Unique: ${data.periodStats.day.unique}`;
+                document.getElementById('fastDay').textContent = dayText;
+                document.getElementById('fastDay').setAttribute('data-orig-value', dayText);
+
+                const monthText = `All: ${data.periodStats.month.total}, Unique: ${data.periodStats.month.unique}`;
+                document.getElementById('fastMonth').textContent = monthText;
+                document.getElementById('fastMonth').setAttribute('data-orig-value', monthText);
+
+                const allText = `All: ${data.periodStats.all_time.total}, Unique: ${data.periodStats.all_time.unique}`;
+                document.getElementById('fastAll').textContent = allText;
+                document.getElementById('fastAll').setAttribute('data-orig-value', allText);
         }
         window.addEventListener('DOMContentLoaded', loadFastStats);
         // for photos
