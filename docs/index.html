@@ -1178,20 +1178,34 @@
 
         // fast statictics
         async function loadFastStats() {
-            try {
-                const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
-                const data = await resp.json();
-                if (data && data.periodStats) {
-                    document.getElementById('fastDay').textContent = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
-                    document.getElementById('fastMonth').textContent = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
-                    document.getElementById('fastAll').textContent = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
-                }
-            } catch (e) {
-                document.getElementById('fastDay').textContent = 'Ошибка';
-                document.getElementById('fastMonth').textContent = 'Ошибка';
-                document.getElementById('fastAll').textContent = 'Ошибка';
-            }
+    try {
+        const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
+        const data = await resp.json();
+        if (data && data.periodStats) {
+            const dayText = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
+            document.getElementById('fastDay').textContent = dayText;
+            document.getElementById('fastDay').setAttribute('data-orig-value', dayText);
+
+            const monthText = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
+            document.getElementById('fastMonth').textContent = monthText;
+            document.getElementById('fastMonth').setAttribute('data-orig-value', monthText);
+
+            const allText = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
+            document.getElementById('fastAll').textContent = allText;
+            document.getElementById('fastAll').setAttribute('data-orig-value', allText);
         }
+    } catch (e) {
+        const errorText = 'Ошибка';
+        document.getElementById('fastDay').textContent = errorText;
+        document.getElementById('fastDay').setAttribute('data-orig-value', errorText);
+        document.getElementById('fastMonth').textContent = errorText;
+        document.getElementById('fastMonth').setAttribute('data-orig-value', errorText);
+        document.getElementById('fastAll').textContent = errorText;
+        document.getElementById('fastAll').setAttribute('data-orig-value', errorText);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', loadFastStats);
         // for photos
         document.querySelectorAll('.stats-thumb').forEach(img => {
             img.addEventListener('click', function (e) {

@@ -104,6 +104,6 @@
 
 
     - name: Start containers
-      command: docker-compose up -d
+      command: docker compose up --build
       args:
         chdir: /opt/CookieLess/backend
