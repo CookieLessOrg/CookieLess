@@ -76,7 +76,7 @@
 
     - name: Copy backend code
       copy:
-        src: ../backend
+        src: "/home/runner/work/CookieLess/CookieLess/backend"
         dest: /opt/CookieLess
 
     - name: Create .env file for docker-compose
