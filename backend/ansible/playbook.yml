@@ -10,7 +10,7 @@
   tasks:
 
     - name: Update code from git
-      command: git fetch --all && git reset --hard origin/main
+      command: git pull
       args:
         chdir: /opt/CookieLess
 
