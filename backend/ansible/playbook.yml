@@ -86,10 +86,10 @@
       copy:
         dest: /opt/CookieLess/backend/.env
         content: |
-          MONGO_INITDB_ROOT_USERNAME={{ lookup('env', 'MONGO_INITDB_ROOT_USERNAME') }}
-          MONGO_INITDB_ROOT_PASSWORD={{ lookup('env', 'MONGO_INITDB_ROOT_PASSWORD') }}
-          MONGO_HOST={{ lookup('env', 'MONGO_HOST') }}
-          MONGO_PORT={{ lookup('env', 'MONGO_PORT') }}
+          MONGO_INITDB_ROOT_USERNAME={{ MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD={{ MONGO_INITDB_ROOT_PASSWORD }}
+          MONGO_HOST={{ MONGO_HOST }}
+          MONGO_PORT={{ MONGO_PORT }}
 
     - name: Start containers
       command: docker-compose up -d
