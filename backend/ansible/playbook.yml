@@ -8,6 +8,13 @@
     retention_days: 30
     docker_compose_version: "2.34.0"
   tasks:
+
+    - name: Update code from git
+      command: git pull origin main
+      args:
+        chdir: /opt/CookieLess
+      become: yes  
+
     # Check existing installations
     - name: Check Docker installation
       command: docker --version
@@ -73,15 +80,7 @@
         hour: "3"
         job: "find {{ backup_dir }} -name 'mongodb-*.gz' -mtime +{{ retention_days }} -delete"
         user: root
-
-    - name: Copy backend code
-      copy:
-        src: "../"
-        dest: /opt/CookieLess/backend
-        owner: root
-        group: root
-        mode: '0755'
-
+        
     - name: Create .env file for docker-compose
       template:
         src: ../templates/env.j2
