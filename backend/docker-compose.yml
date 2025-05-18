@@ -28,7 +28,8 @@ services:
     ports: ["7880:80", "7881:443"]
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./etc/ssl/:/etc/ssl/
+      - /etc/letsencrypt/live/cookielessapi.3192693-wd09907.twc1.net:/etc/letsencrypt/live/cookielessapi.3192693-wd09907.twc1.net:ro
+      - /etc/letsencrypt/archive/cookielessapi.3192693-wd09907.twc1.net:/etc/letsencrypt/archive/cookielessapi.3192693-wd09907.twc1.net:ro
       - stats_data:/var/www/stats
     depends_on:
       - api
