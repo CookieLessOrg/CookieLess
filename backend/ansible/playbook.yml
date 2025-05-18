@@ -1,31 +1,80 @@
 ---
-- hosts: all
+- name: Configure CookieLess backend
+  hosts: all
   become: yes
+  vars:
+    app_dir: /opt/CookieLess
+    backup_dir: /opt/backups
+    cron_backup: "0 3 * * *"  # Daily at 3 AM
+
   tasks:
+    # Base system setup
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    # Docker installation
     - name: Install Docker
       apt:
         name: docker.io
         state: present
 
     - name: Install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-linux-x86_64
+      ansible.builtin.get_url:
+        url: https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-linux-x86_64
         dest: /usr/local/bin/docker-compose
         mode: '0755'
 
-    - name: Copy backend code
-      copy:
-        src: ../backend
-        dest: /opt/CookieLess
+    # Application setup
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
 
-    - name: Create .env file for docker-compose
-      copy:
-        dest: /opt/CookieLess/backend/.env
-        content: |
-          MONGO_INITDB_ROOT_USERNAME={{ lookup('env', 'MONGO_INITDB_ROOT_USERNAME') }}
-          MONGO_INITDB_ROOT_PASSWORD={{ lookup('env', 'MONGO_INITDB_ROOT_PASSWORD') }}
-          MONGO_HOST=mongodb
-          MONGO_PORT=27017
+    - name: Synchronize backend code
+      ansible.builtin.synchronize:
+        src: ../backend/
+        dest: "{{ app_dir }}"
+        delete: yes
 
+    - name: Create .env file
+      ansible.builtin.template:
+        src: templates/env.j2
+        dest: "{{ app_dir }}/.env"
+
+    # MongoDB backup setup
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Install MongoDB backup cron
+      ansible.builtin.cron:
+        name: "MongoDB daily backup"
+        job: "docker exec cookieless-mongodb-1 mongodump --archive={{ backup_dir }}/backup-$(date +\\%F).gz --gzip"
+        cron_file: mongodb_backup
+        user: root
+        minute: "{{ cron_backup.split()[0] }}"
+        hour: "{{ cron_backup.split()[1] }}"
+
+    # Security setup
+    - name: Configure UFW firewall
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - 7880
+        - 7881
+        - 9333
+
+    # Application deployment
     - name: Start containers
-      command: docker-compose -f /opt/CookieLess/docker-compose.yml up -d
+      community.docker.docker_compose:
+        project_src: "{{ app_dir }}"
+        build: yes
+        restart: yes
+        recreate: always
+        remove_orphans: yes

@@ -4,25 +4,27 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend.yml'
+      - 'playbook.yml'
     branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      
+      - name: Setup Ansible
+        uses: ansible/ansible-action@master
         with:
-          fetch-depth: 0
+          requirements: ansible-core==2.12
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+      - name: Run Ansible Playbook
+        uses: ansible/ansible-action@master
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /opt/CookieLess/backend
-            git pull origin main
-            sudo docker-compose down
-            sudo docker-compose up -d --build
+          playbook: playbook.yml
+          inventory: |
+            [production]
+            ${{ secrets.SERVER_IP }}
+          extra-vars: |
+            MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+            MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
