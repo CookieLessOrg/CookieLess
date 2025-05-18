@@ -32,6 +32,7 @@ services:
       - stats_data:/var/www/stats
     depends_on:
       - api
+    command: /bin/sh -c "rm -f /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
 volumes:
   mongodb_data:
