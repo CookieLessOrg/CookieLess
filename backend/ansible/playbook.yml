@@ -80,14 +80,13 @@
         hour: "3"
         job: "find {{ backup_dir }} -name 'mongodb-*.gz' -mtime +{{ retention_days }} -delete"
         user: root
-        
+
     - name: Create .env file for docker-compose
       template:
         src: ../templates/env.j2
         dest: /opt/CookieLess/backend/.env
         owner: root
         group: root
-        mode: '0600'
 
 
     - name: Start containers
