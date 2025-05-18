@@ -1220,6 +1220,20 @@
                     month = data.month || '—';
                     all = data.all || '—';
                     console.log('Fast statistics:', data);
+                    data.periodStats = {
+                        day: {
+                            total: data.day || '—',
+                            unique: data.month || '—'
+                        },
+                        month: {
+                            total: data.month || '—',
+                            unique: data.month || '—'
+                        },
+                        all_time: {
+                            total: data.all || '—',
+                            unique: data.all || '—'
+                        }
+                    }
                 }
             } catch (e) {
                 // Можно добавить логирование ошибки, если нужно
