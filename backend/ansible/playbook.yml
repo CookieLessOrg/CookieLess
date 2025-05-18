@@ -92,4 +92,4 @@
           MONGO_PORT={{ lookup('env', 'MONGO_PORT') }}
 
     - name: Start containers
-      command: docker-compose -f /opt/CookieLess/docker-compose.yml up -d
+      command: docker-compose -f /opt/CookieLess/backend/docker-compose.yml up -d
