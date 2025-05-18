@@ -1178,13 +1178,13 @@
             const data = await resp.json();
             console.log(data);
             if (data && data.periodStats) {
-                const dayText = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
+                const dayText = `All: ${data.periodStats.day.total}, Unique: ${data.periodStats.day.unique}`;
                 document.getElementById('fastDay').textContent = dayText;
                 
-                const monthText = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
+                const monthText = `All: ${data.periodStats.month.total}, Unique: ${data.periodStats.month.unique}`;
                 document.getElementById('fastMonth').textContent = monthText;
 
-                const allText = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
+                const allText = `All: ${data.periodStats.all_time.total}, Unique: ${data.periodStats.all_time.unique}`;
                 document.getElementById('fastAll').textContent = allText;
             }
         } catch (e) {
