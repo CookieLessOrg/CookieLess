@@ -1184,6 +1184,7 @@
         try {
             const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
             const data = await resp.json();
+            console.log(data);
             if (data && data.periodStats) {
                 const dayText = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
                 document.getElementById('fastDay').textContent = dayText;
