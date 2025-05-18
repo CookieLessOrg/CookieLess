@@ -334,15 +334,20 @@
             <h2>Графики всякие (изменить название)</h2>
 
             <div class="stats-images">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats1.png" alt="Статистика 1"
+                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats1.png"
+                    alt="Статистика 1"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats2.png" alt="Статистика 2"
+                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats2.png"
+                    alt="Статистика 2"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats3.png" alt="Статистика 3"
+                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats3.png"
+                    alt="Статистика 3"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats4.png" alt="Статистика 4"
+                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats4.png"
+                    alt="Статистика 4"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats5.png" alt="Статистика 5"
+                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats5.png"
+                    alt="Статистика 5"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
             </div>
             <div id="img-modal" class="img-modal" onclick="closeImgModal()">
@@ -1177,35 +1182,57 @@
         // }
 
         // fast statictics
+        // async function loadFastStats() {
+        // try {
+        //     const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
+        //     const data = await resp.json();
+        //     if (data && data.periodStats) {
+        //         const dayText = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
+        //         document.getElementById('fastDay').textContent = dayText;
+        //         document.getElementById('fastDay').setAttribute('data-orig-value', dayText);
+
+        //         const monthText = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
+        //         document.getElementById('fastMonth').textContent = monthText;
+        //         document.getElementById('fastMonth').setAttribute('data-orig-value', monthText);
+
+        //         const allText = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
+        //         document.getElementById('fastAll').textContent = allText;
+        //         document.getElementById('fastAll').setAttribute('data-orig-value', allText);
+        //     }
+        // } catch (e) {
+        //     const errorText = 'Ошибка';
+        //     document.getElementById('fastDay').textContent = errorText;
+        //     document.getElementById('fastDay').setAttribute('data-orig-value', errorText);
+        //     document.getElementById('fastMonth').textContent = errorText;
+        //     document.getElementById('fastMonth').setAttribute('data-orig-value', errorText);
+        //     document.getElementById('fastAll').textContent = errorText;
+        //     document.getElementById('fastAll').setAttribute('data-orig-value', errorText);
+        // }
+        // };
+        // ... existing code ...
         async function loadFastStats() {
-    try {
-        const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
-        const data = await resp.json();
-        if (data && data.periodStats) {
-            const dayText = `Всего: ${data.periodStats.day.total}, Уникальных: ${data.periodStats.day.unique}`;
-            document.getElementById('fastDay').textContent = dayText;
-            document.getElementById('fastDay').setAttribute('data-orig-value', dayText);
-
-            const monthText = `Всего: ${data.periodStats.month.total}, Уникальных: ${data.periodStats.month.unique}`;
-            document.getElementById('fastMonth').textContent = monthText;
-            document.getElementById('fastMonth').setAttribute('data-orig-value', monthText);
-
-            const allText = `Всего: ${data.periodStats.all_time.total}, Уникальных: ${data.periodStats.all_time.unique}`;
-            document.getElementById('fastAll').textContent = allText;
-            document.getElementById('fastAll').setAttribute('data-orig-value', allText);
+            let day = '—', month = '—', all = '—';
+            try {
+                // Замените URL на тот, который разрешает ваш origin или используйте прокси для разработки
+                const response = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
+                if (response.ok) {
+                    const data = await response.json();
+                    day = data.day || '—';
+                    month = data.month || '—';
+                    all = data.all || '—';
+                }
+            } catch (e) {
+                // Можно добавить логирование ошибки, если нужно
+            }
+            document.getElementById('fastDay').textContent = day;
+            document.getElementById('fastDay').setAttribute('data-orig-value', day);
+            document.getElementById('fastMonth').textContent = month;
+            document.getElementById('fastMonth').setAttribute('data-orig-value', month);
+            document.getElementById('fastAll').textContent = all;
+            document.getElementById('fastAll').setAttribute('data-orig-value', all);
         }
-    } catch (e) {
-        const errorText = 'Ошибка';
-        document.getElementById('fastDay').textContent = errorText;
-        document.getElementById('fastDay').setAttribute('data-orig-value', errorText);
-        document.getElementById('fastMonth').textContent = errorText;
-        document.getElementById('fastMonth').setAttribute('data-orig-value', errorText);
-        document.getElementById('fastAll').textContent = errorText;
-        document.getElementById('fastAll').setAttribute('data-orig-value', errorText);
-    }
-}
-
-window.addEventListener('DOMContentLoaded', loadFastStats);
+        // ... existing code ...
+        window.addEventListener('DOMContentLoaded', loadFastStats);
         // for photos
         document.querySelectorAll('.stats-thumb').forEach(img => {
             img.addEventListener('click', function (e) {
