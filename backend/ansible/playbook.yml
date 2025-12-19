@@ -7,11 +7,6 @@
     docker_compose_version: "2.34.0"
   tasks:
 
-    - name: Update code from git
-      command: git pull
-      args:
-        chdir: /opt/CookieLess
-
     # Check existing installations
     - name: Check Docker installation
       command: docker --version
@@ -94,8 +89,7 @@
       become: true
       file:
         path: /opt/CookieLess/backend
-        owner: root
-        group: root
+        owner: "{{ ansible_user_id }}"
         mode: '0755'
         recurse: yes
 

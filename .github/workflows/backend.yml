@@ -22,6 +22,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            echo "${{ secrets.SERVER_SUDO_PASS }}" | sudo -S chown -R $USER:$USER /opt/CookieLess
             cd /opt/CookieLess/backend
             git fetch --all && git reset --hard origin/main
             ansible-playbook ansible/playbook.yml \
