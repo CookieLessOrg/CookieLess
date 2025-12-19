@@ -70,7 +70,8 @@ def create_app():
     # Initialize MongoDB connection using credentials from environment
     mongo_user = os.environ.get("MONGO_INITDB_ROOT_USERNAME")
     mongo_pass = os.environ.get("MONGO_INITDB_ROOT_PASSWORD")
-    mongo_uri = f"mongodb://{mongo_user}:{mongo_pass}@mongodb:27017/cookieless?authSource=admin"
+    mongo_db = "cookieless"
+    mongo_uri = f"mongodb://{mongo_user}:{mongo_pass}@mongodb:27017/{mongo_db}?authSource=admin"
     app.client = MongoClient(mongo_uri)
     app.db = app.client[mongo_db]
     app.data_collection = app.db["visits"]
