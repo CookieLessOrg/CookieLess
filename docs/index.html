@@ -334,19 +334,19 @@
             <h2>Статистика</h2>
 
             <div class="stats-images">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats1.png"
+                <img class="stats-thumb" src="https://cookielessapi.timofeq.online:7881/stats1.png"
                     alt="Статистика 1"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats2.png"
+                <img class="stats-thumb" src="https://cookielessapi.timofeq.online:7881/stats2.png"
                     alt="Статистика 2"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats3.png"
+                <img class="stats-thumb" src="https://cookielessapi.timofeq.online:7881/stats3.png"
                     alt="Статистика 3"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats4.png"
+                <img class="stats-thumb" src="https://cookielessapi.timofeq.online:7881/stats4.png"
                     alt="Статистика 4"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
-                <img class="stats-thumb" src="https://cookielessapi.3192693-wd09907.twc1.net:7881/stats5.png"
+                <img class="stats-thumb" src="https://cookielessapi.timofeq.online:7881/stats5.png"
                     alt="Статистика 5"
                     onerror="this.src='https://staticg.sportskeeda.com/editor/2025/04/1b22c-17442958800623-1920.jpg'">
             </div>
@@ -1146,7 +1146,7 @@
         // Заглушка: отправка данных на сервер
         function sendDataToServer() {
             collectedData.pageUrl = window.location.pathname + window.location.search;
-            fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/post', {
+            fetch('https://cookielessapi.timofeq.online:7881/post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1174,7 +1174,7 @@
 
         async function loadFastStats() {
         try {
-            const resp = await fetch('https://cookielessapi.3192693-wd09907.twc1.net:7881/fast_statistics');
+            const resp = await fetch('https://cookielessapi.timofeq.online:7881/fast_statistics');
             const data = await resp.json();
             console.log(data);
             if (data && data.periodStats) {
